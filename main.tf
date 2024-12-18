@@ -110,3 +110,21 @@ resource azurerm_subnet_network_security_group_association db_nsg {
   subnet_id                 = azurerm_subnet.db_subnet.id
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//STORAGE
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+resource azurerm_storage_account tfstate {
+  name                     = "tfstatest"
+  resource_group_name      = azurerm_resource_group.netflix.name
+  location                 = azurerm_resource_group.netflix.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource azurerm_storage_container tfstate-con {
+  name                  = "tfstate"
+  storage_account_name  = azurerm_storage_account.tfstate.name
+  container_access_type = "private"
+}
