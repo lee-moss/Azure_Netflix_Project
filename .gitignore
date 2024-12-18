@@ -45,3 +45,6 @@ provider.tf
 go.work
 go.mod
 go.sum
+
+# Crash log files
+crash.log
