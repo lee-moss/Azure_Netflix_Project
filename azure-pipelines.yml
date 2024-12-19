@@ -26,7 +26,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'init'
-              backendServiceArm: 'Azure-ServiceConnection'
+              backendServiceArm: 'devOps-connection'
               backendAzureRmResourceGroupName: '$(TF_STATE_RG)'
               backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
               backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
@@ -36,7 +36,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'
-              environmentServiceNameAzureRM: 'Azure-ServiceConnection'
+              environmentServiceNameAzureRM: 'devOps-connection'
               commandOptions: '-var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=$(admin_username_secret)"'
 
   - stage: Deploy
@@ -48,4 +48,4 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'apply'
-              environmentServiceNameAzureRM: 'Azure-ServiceConnection' 
+              environmentServiceNameAzureRM: 'devOps-connection' 
