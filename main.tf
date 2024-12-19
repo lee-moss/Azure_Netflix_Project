@@ -131,6 +131,6 @@ resource azurerm_storage_account tfstate {
 
 resource azurerm_storage_container tfstate-con {
   name                  = "tfstate"
-  storage_account_id    = azurerm_storage_account.tfstate.id
+  storage_account_name    = azurerm_storage_account.tfstate.name #'name' is deprecated but ID will not work
   container_access_type = "private"
 }
