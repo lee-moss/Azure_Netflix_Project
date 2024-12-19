@@ -111,6 +111,12 @@ resource azurerm_subnet_network_security_group_association db_nsg {
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
+resource azurerm_role_assignment kv_secrets {
+  scope                = data.azurerm_key_vault.netflix.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //STORAGE
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,6 +131,6 @@ resource azurerm_storage_account tfstate {
 
 resource azurerm_storage_container tfstate-con {
   name                  = "tfstate"
-  storage_account_name  = azurerm_storage_account.tfstate.name
+  storage_account_id    = azurerm_storage_account.tfstate.id
   container_access_type = "private"
 }

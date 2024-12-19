@@ -37,6 +37,7 @@ stages:
               provider: 'azurerm'
               command: 'plan'
               environmentServiceNameAzureRM: 'Azure-ServiceConnection'
+              commandOptions: '-var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=$(admin_username_secret)"'
 
   - stage: Deploy
     condition: succeeded('Validate')
