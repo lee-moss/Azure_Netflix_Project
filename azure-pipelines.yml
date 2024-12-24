@@ -1,5 +1,5 @@
 trigger:
-batch: true
+  batch: true
   branches:
     include:
     - main
@@ -8,7 +8,7 @@ batch: true
     - '*.tf'
     - '*.tfvars'
     - 'azure-pipelines.yml'
-    
+
 pool:
   vmImage: 'ubuntu-latest'
 
