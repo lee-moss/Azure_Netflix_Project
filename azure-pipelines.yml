@@ -26,6 +26,22 @@ stages:
     jobs:
       - job: ValidateAndPlan
         steps:
+          - task: AzureCLI@2
+            displayName: 'Configure Key Vault Access'
+            inputs:
+              azureSubscription: 'devOps-connection'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                # Enable RBAC on Key Vault
+                az keyvault update \
+                  --name "NetflixSecret" \
+                  --resource-group "NetflixProject" \
+                  --enable-rbac-authorization true
+                
+                echo "Waiting for RBAC permissions to propagate..."
+                sleep 60  # Wait 60 seconds
+
           - task: TerraformInstaller@1
             inputs:
               terraformVersion: 'latest'
@@ -57,4 +73,4 @@ stages:
               provider: 'azurerm'
               command: 'apply'
               environmentServiceNameAzureRM: 'devOps-connection'
-              commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"' 
+              commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"'
