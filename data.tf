@@ -4,12 +4,12 @@ data "azurerm_key_vault" "netflix" {
 }
 
 data "azurerm_key_vault_secret" "admin_username" {
-  name         = var.admin_username_secret
+  name         = var.vm-admin-username
   key_vault_id = data.azurerm_key_vault.netflix.id
 }
 
 data "azurerm_key_vault_secret" "admin_password" {
-  name         = var.admin_password_secret
+  name         = var.vm-password
   key_vault_id = data.azurerm_key_vault.netflix.id
 }
 
