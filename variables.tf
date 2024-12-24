@@ -2,6 +2,10 @@ variable "admin_password" {
   type = string
 }
 
+variable "admin_username" {
+  type = string
+}
+
 variable "key_vault_name" {
   type = string
 }
@@ -18,8 +22,4 @@ variable "admin_username_secret" {
 variable "admin_password_secret" {
   type = string
   default = "vm-password"
-}
-
-variable "admin_username" {
-  type = string
 }
