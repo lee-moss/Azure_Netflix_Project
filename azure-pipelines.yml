@@ -36,6 +36,7 @@ stages:
                   --role "Key Vault Secrets User" \
                   --assignee $(az account show --query user.name -o tsv) \
                   --scope "/subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourcegroups/netflixproject/providers/microsoft.keyvault/vaults/netflixsecret"
+
           - task: TerraformInstaller@1
             inputs:
               terraformVersion: 'latest'
