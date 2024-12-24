@@ -61,8 +61,7 @@ stages:
               provider: 'azurerm'
               command: 'plan'
               environmentServiceNameAzureRM: 'devOps-connection'
-              commandOptions: '-var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"'
-
+              commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"' 
   - stage: Deploy
     condition: succeeded('Validate')
     jobs:
@@ -73,4 +72,4 @@ stages:
               provider: 'azurerm'
               command: 'apply'
               environmentServiceNameAzureRM: 'devOps-connection' 
-              commandOptions: '-var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=$(admin_username_secret)"' 
+              commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"' 
