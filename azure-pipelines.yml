@@ -43,6 +43,16 @@ stages:
               commandOptions: '-upgrade'
 
           - task: TerraformTaskV4@4
+            displayName: 'Import Resource Group'
+            inputs:
+              provider: 'azurerm'
+              command: 'custom'
+              customCommand: 'import'
+              backendServiceArm: 'devOps-connection'
+              environmentServiceNameAzureRM: 'devOps-connection'
+              commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password" azurerm_resource_group.netflix /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone'
+
+          - task: TerraformTaskV4@4
             inputs:
               provider: 'azurerm'
               command: 'plan'
@@ -75,11 +85,3 @@ stages:
               command: 'apply'
               environmentServiceNameAzureRM: 'devOps-connection'
               commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"'
-
-          - task: TerraformTaskV4@4
-            displayName: 'Import Resource Group'
-            inputs:
-              provider: 'azurerm'
-              command: 'import'
-              environmentServiceNameAzureRM: 'devOps-connection'
-              commandOptions: 'azurerm_resource_group.netflix /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone'
