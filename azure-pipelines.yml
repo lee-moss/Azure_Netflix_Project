@@ -46,10 +46,10 @@ stages:
             displayName: 'Import Resource Group'
             inputs:
               provider: 'azurerm'
-              command: 'import'
-              environmentServiceNameAzureRM: 'devOps-connection'
+              command: 'custom'
+              customCommand: 'import'
+              backendServiceArm: 'devOps-connection'
               commandOptions: 'azurerm_resource_group.netflix /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone'
-
 
           - task: TerraformTaskV4@4
             inputs:
