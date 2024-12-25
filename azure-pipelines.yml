@@ -32,15 +32,6 @@ stages:
               azureSubscription: 'devOps-connection'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
-              inlineScript: |
-                # Enable RBAC on Key Vault
-                az keyvault update \
-                  --name "NetflixSecret" \
-                  --resource-group "NetflixProject" \
-                  --enable-rbac-authorization true
-                
-                echo "Waiting for RBAC permissions to propagate..."
-                sleep 60  # Wait 60 seconds
 
           - task: TerraformInstaller@1
             inputs:
