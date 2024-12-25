@@ -1,13 +1,4 @@
-trigger:
-  batch: true
-  branches:
-    include:
-    - main
-  paths:
-    include:
-    - '*.tf'
-    - '*.tfvars'
-    - 'azure-pipelines.yml'
+trigger: none
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -26,22 +17,6 @@ stages:
     jobs:
       - job: ValidateAndPlan
         steps:
-          - task: AzureCLI@2
-            displayName: 'Configure Key Vault Access'
-            inputs:
-              azureSubscription: 'devOps-connection'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                # Enable RBAC on Key Vault
-                az keyvault update \
-                  --name "NetflixSecret" \
-                  --resource-group "NetflixProject" \
-                  --enable-rbac-authorization true
-                
-                echo "Waiting for RBAC permissions to propagate..."
-                sleep 60  # Wait 60 seconds
-
           - task: TerraformInstaller@1
             inputs:
               terraformVersion: 'latest'
@@ -55,6 +30,7 @@ stages:
               backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
               backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
               backendAzureRmKey: 'netflix.tfstate'
+              commandOptions: '-upgrade'
 
           - task: TerraformTaskV4@4
             inputs:
