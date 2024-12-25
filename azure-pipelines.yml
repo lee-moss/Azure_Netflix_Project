@@ -1,5 +1,15 @@
 trigger: none
 
+pr:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - '**/*.tf'
+    - '**/*.tfvars'
+    - 'azure-pipelines.yml'
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -44,6 +54,21 @@ stages:
     jobs:
       - job: Apply
         steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: 'latest'
+
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              backendServiceArm: 'devOps-connection'
+              backendAzureRmResourceGroupName: '$(TF_STATE_RG)'
+              backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
+              backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
+              backendAzureRmKey: 'netflix.tfstate'
+              commandOptions: '-upgrade'
+
           - task: TerraformTaskV4@4
             inputs:
               provider: 'azurerm'
