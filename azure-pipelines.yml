@@ -23,7 +23,33 @@ variables:
     value: 'tfstate'
 
 stages:
+  - stage: Analysis
+    displayName: 'Code Analysis'
+    jobs:
+      - job: CodeAnalysis
+        steps:
+          - task: SonarQubePrepare@5
+            inputs:
+              SonarQube: 'SonarQube'
+              scannerMode: 'CLI'
+              configMode: 'manual'
+              cliProjectKey: 'netflix-terraform'
+              cliProjectName: 'Netflix Terraform'
+              cliSources: '.'
+              extraProperties: |
+                sonar.exclusions=**/*.tfstate,**/.terraform/**/*
+                sonar.terraform.file.suffixes=.tf,.tfvars
+                sonar.sourceEncoding=UTF-8
+
+          - task: SonarQubeAnalyze@5
+
+          - task: SonarQubePublish@5
+            inputs:
+              pollingTimeoutSec: '300'
+
   - stage: Validate
+    dependsOn: Analysis
+    condition: succeeded('Analysis')
     jobs:
       - job: ValidateAndPlan
         steps:
@@ -119,7 +145,28 @@ stages:
               environmentServiceNameAzureRM: 'devOps-connection'
               commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"'
 
+          - task: TerraformTaskV4@4
+            displayName: 'Import AKS Subnet'
+            inputs:
+              provider: 'azurerm'
+              command: 'custom'
+              customCommand: 'import'
+              backendServiceArm: 'devOps-connection'
+              environmentServiceNameAzureRM: 'devOps-connection'
+              commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password" azurerm_subnet.aks_subnet /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone/providers/Microsoft.Network/virtualNetworks/netflix-network/subnets/aks-subnet'
+
+          - task: TerraformTaskV4@4
+            displayName: 'Import Network Interface'
+            inputs:
+              provider: 'azurerm'
+              command: 'custom'
+              customCommand: 'import'
+              backendServiceArm: 'devOps-connection'
+              environmentServiceNameAzureRM: 'devOps-connection'
+              commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password" azurerm_network_interface.nic /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone/providers/Microsoft.Network/networkInterfaces/vm1-nic'
+
   - stage: Deploy
+    dependsOn: Validate
     condition: succeeded('Validate')
     jobs:
       - job: Apply
@@ -208,6 +255,26 @@ stages:
               backendServiceArm: 'devOps-connection'
               environmentServiceNameAzureRM: 'devOps-connection'
               commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password" azurerm_storage_container.tfstate-con https://tfstatest.blob.core.windows.net/tfstate'
+
+          - task: TerraformTaskV4@4
+            displayName: 'Import AKS Subnet'
+            inputs:
+              provider: 'azurerm'
+              command: 'custom'
+              customCommand: 'import'
+              backendServiceArm: 'devOps-connection'
+              environmentServiceNameAzureRM: 'devOps-connection'
+              commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password" azurerm_subnet.aks_subnet /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone/providers/Microsoft.Network/virtualNetworks/netflix-network/subnets/aks-subnet'
+
+          - task: TerraformTaskV4@4
+            displayName: 'Import Network Interface'
+            inputs:
+              provider: 'azurerm'
+              command: 'custom'
+              customCommand: 'import'
+              backendServiceArm: 'devOps-connection'
+              environmentServiceNameAzureRM: 'devOps-connection'
+              commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password" azurerm_network_interface.nic /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone/providers/Microsoft.Network/networkInterfaces/vm1-nic'
 
           - task: TerraformTaskV4@4
             inputs:
