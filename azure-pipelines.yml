@@ -31,14 +31,17 @@ stages:
           - task: SonarCloudPrepare@1
             inputs:
               SonarCloud: 'SonarCloud'
-              organization: 'LAM5'
+              organization: 'lam5'
               scannerMode: 'CLI'
               configMode: 'manual'
-              cliProjectKey: 'netflix-terraform'
-              cliProjectName: 'Netflix Terraform'
+              cliProjectKey: 'LAM5_Azure-Netflix'
+              cliProjectName: 'Azure-Netflix'
               cliSources: '.'
               extraProperties: |
-                sonar.exclusions=**/*.tfstate,**/.terraform/**/*
+                sonar.projectKey=LAM5_Azure-Netflix
+                sonar.organization=lam5
+                sonar.sources=.
+                sonar.exclusions=**/*.tfstate,**/.terraform/**/*,**/*.md
                 sonar.terraform.file.suffixes=.tf,.tfvars
                 sonar.sourceEncoding=UTF-8
 
@@ -47,6 +50,7 @@ stages:
           - task: SonarCloudPublish@1
             inputs:
               pollingTimeoutSec: '300'
+              waitForQualityGate: true
 
   - stage: Validate
     dependsOn: Analysis
