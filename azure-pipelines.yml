@@ -34,8 +34,8 @@ stages:
               organization: 'LAM5'
               scannerMode: 'CLI'
               configMode: 'manual'
-              cliProjectKey: 'netflix-terraform'
-              cliProjectName: 'Netflix Terraform'
+              cliProjectKey: 'Azure-Netflix'
+              cliProjectName: 'Azure-Netflix'
               cliSources: '.'
               extraProperties: |
                 sonar.exclusions=**/*.tfstate,**/.terraform/**/*
