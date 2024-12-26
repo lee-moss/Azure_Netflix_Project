@@ -1,4 +1,4 @@
-# Netflix Clone Deployment with Azure DevOps, Terraform, Docker, and Kubernetes
+# Netflix Clone Deployment with Azure DevOps, Terraform, SonarQube, Docker, and Kubernetes
 
 THIS IS AN ONGOING PROJECT AND WILL BE UPDATED FREQUENTLY
 
