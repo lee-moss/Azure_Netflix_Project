@@ -29,28 +29,20 @@ stages:
       - job: CodeAnalysis
         steps:
           - task: SonarCloudPrepare@1
+            displayName: 'Prepare SonarCloud Analysis'
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
-              scannerMode: 'CLI'
-              configMode: 'manual'
-              cliProjectKey: 'LAM5_Azure-Netflix'
-              cliProjectName: 'Azure-Netflix'
-              cliSources: '.'
-              extraProperties: |
-                sonar.projectKey=LAM5_Azure-Netflix
-                sonar.organization=lam5
-                sonar.sources=.
-                sonar.exclusions=**/*.tfstate,**/.terraform/**/*,**/*.md
-                sonar.terraform.file.suffixes=.tf,.tfvars
-                sonar.sourceEncoding=UTF-8
+              scannerMode: 'MSBuild'
+              projectKey: 'LAM5_Azure-Netflix'
+              projectName: 'Azure-Netflix'
 
           - task: SonarCloudAnalyze@1
 
           - task: SonarCloudPublish@1
+            displayName: 'Publish Results'
             inputs:
               pollingTimeoutSec: '300'
-              waitForQualityGate: true
 
   - stage: Validate
     dependsOn: Analysis
