@@ -28,9 +28,10 @@ stages:
     jobs:
       - job: CodeAnalysis
         steps:
-          - task: SonarQubePrepare@5
+          - task: SonarCloudPrepare@1
             inputs:
-              SonarQube: 'SonarQube'
+              SonarCloud: 'SonarCloud'
+              organization: 'LAM5'
               scannerMode: 'CLI'
               configMode: 'manual'
               cliProjectKey: 'netflix-terraform'
@@ -41,9 +42,9 @@ stages:
                 sonar.terraform.file.suffixes=.tf,.tfvars
                 sonar.sourceEncoding=UTF-8
 
-          - task: SonarQubeAnalyze@5
+          - task: SonarCloudAnalyze@1
 
-          - task: SonarQubePublish@5
+          - task: SonarCloudPublish@1
             inputs:
               pollingTimeoutSec: '300'
 
