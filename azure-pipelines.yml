@@ -41,6 +41,10 @@ stages:
               cliProjectKey: 'LAM5_Azure-Netflix'
               cliProjectName: 'Azure-Netflix'
               cliSources: '.'
+              extraProperties: |
+                sonar.branch.name=$(Build.SourceBranchName)
+                sonar.qualitygate.wait=false
+
 
           - task: SonarCloudAnalyze@2
             displayName: 'Run Code Analysis'
