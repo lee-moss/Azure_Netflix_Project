@@ -1,4 +1,4 @@
-trigger:
+trigger: none
   branches:
     include:
       - main
@@ -39,7 +39,8 @@ stages:
           - checkout: self
             fetchDepth: 0
             
-          - task: SonarCloudPrepare@1
+          - task: SonarCloudPrepare@2
+            displayName: 'Prepare Analysis'
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
@@ -49,10 +50,10 @@ stages:
               cliProjectName: 'Azure-Netflix'
               cliSources: '.'
 
-          - task: SonarCloudAnalyze@1
+          - task: SonarCloudAnalyze@2
             displayName: 'Run Code Analysis'
 
-          - task: SonarCloudPublish@1
+          - task: SonarCloudPublish@2
             displayName: 'Publish Quality Gate Result'
             inputs:
               pollingTimeoutSec: '300'
