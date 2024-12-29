@@ -1,14 +1,22 @@
-trigger: none
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - 'azure-pipelines.yml'
 
 pr:
   branches:
     include:
-    - main
+      - main
   paths:
     include:
-    - '**/*.tf'
-    - '**/*.tfvars'
-    - 'azure-pipelines.yml'
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - 'azure-pipelines.yml'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -28,15 +36,21 @@ stages:
     jobs:
       - job: CodeAnalysis
         steps:
+          - checkout: self
+            fetchDepth: 0
+            
           - task: SonarCloudPrepare@1
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
               scannerMode: 'CLI'
-              configMode: 'file'
+              configMode: 'manual'
+              cliProjectKey: 'LAM5_Azure-Netflix'
+              cliProjectName: 'Azure-Netflix'
+              cliSources: '.'
 
           - task: SonarCloudAnalyze@1
-            displayName: 'Run Analysis'
+            displayName: 'Run Code Analysis'
 
           - task: SonarCloudPublish@1
             displayName: 'Publish Quality Gate Result'
