@@ -33,9 +33,16 @@ stages:
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
-              scannerMode: 'MSBuild'
-              projectKey: 'LAM5_Azure-Netflix'
-              projectName: 'Azure-Netflix'
+              scannerMode: 'CLI'
+              configMode: 'manual'
+              cliProjectKey: 'LAM5_Azure-Netflix'
+              cliProjectName: 'Azure-Netflix'
+              cliSources: '.'
+              extraProperties: |
+                sonar.sources=.
+                sonar.exclusions=**/*.tfstate,**/.terraform/**/*
+                sonar.terraform.file.suffixes=.tf,.tfvars
+                sonar.lang.patterns.terraform=**/*.tf,**/*.tfvars
 
           - task: SonarCloudAnalyze@1
 
