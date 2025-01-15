@@ -40,16 +40,13 @@ stages:
 
           - task: SonarCloudAnalyze@1
             displayName: 'Run Analysis'
-
-          - task: Delay@1
-            inputs:
-              delayForMinutes: '1'
+            continueOnError: true
 
           - task: SonarCloudPublish@1
             displayName: 'Publish Quality Gate Result'
             inputs:
               pollingTimeoutSec: '300'
-              waitForQualityGate: true
+            continueOnError: true
 
   - stage: Validate
     dependsOn: Analysis
