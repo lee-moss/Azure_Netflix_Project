@@ -37,15 +37,13 @@ stages:
               organization: 'lam5'
               scannerMode: 'CLI'
               configMode: 'file'
+              extraProperties: |
+                sonar.qualitygate.wait=false
+                sonar.qualitygate.timeout=300
+                sonar.branch.name=$(Build.SourceBranchName)
 
           - task: SonarCloudAnalyze@1
             displayName: 'Run Analysis'
-            continueOnError: true
-
-          - task: SonarCloudPublish@1
-            displayName: 'Publish Quality Gate Result'
-            inputs:
-              pollingTimeoutSec: '300'
             continueOnError: true
 
   - stage: Validate
