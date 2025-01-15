@@ -39,24 +39,25 @@ stages:
           - checkout: self
             fetchDepth: 0
             
-          - task: SonarCloudPrepare@2
-            displayName: 'Prepare Analysis'
+          - task: SonarCloudPrepare@1
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
               scannerMode: 'CLI'
-              configMode: 'manual'
-              cliProjectKey: 'LAM5_Azure-Netflix'
-              cliProjectName: 'Azure-Netflix'
-              cliSources: '.'
+              configMode: 'file'
 
-          - task: SonarCloudAnalyze@2
-            displayName: 'Run Code Analysis'
+          - task: SonarCloudAnalyze@1
+            displayName: 'Run Analysis'
 
-          - task: SonarCloudPublish@2
+          - task: Delay@1
+            inputs:
+              delayForMinutes: '1'
+
+          - task: SonarCloudPublish@1
             displayName: 'Publish Quality Gate Result'
             inputs:
               pollingTimeoutSec: '300'
+              waitForQualityGate: true
 
   - stage: Validate
     dependsOn: Analysis
