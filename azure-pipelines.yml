@@ -1,12 +1,4 @@
 trigger: none
-  branches:
-    include:
-      - main
-  paths:
-    include:
-      - '**/*.tf'
-      - '**/*.tfvars'
-      - 'azure-pipelines.yml'
 
 pr:
   branches:
