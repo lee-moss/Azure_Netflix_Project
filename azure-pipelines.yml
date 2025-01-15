@@ -67,14 +67,14 @@ stages:
               backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
               backendAzureRmKey: 'netflix.tfstate'
 
-          - task: TerraformCLI@0
+          - task: TerraformTaskV4@4
             displayName: 'Import Resource Group'
             inputs:
+              provider: 'azurerm'
               command: 'import'
-              workingDirectory: '$(System.DefaultWorkingDirectory)'
-              environmentServiceName: 'devOps-connection'
-              resourceGroupName: '$(TF_STATE_RG)'
-              importResource: 'azurerm_resource_group.netflix'
+              backendServiceArm: 'devOps-connection'
+              environmentServiceNameAzureRM: 'devOps-connection'
+              importTarget: 'azurerm_resource_group.netflix'
               importId: '/subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone'
 
   - stage: Validate
