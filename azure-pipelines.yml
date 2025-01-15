@@ -71,11 +71,9 @@ stages:
             displayName: 'Import Resource Group'
             inputs:
               provider: 'azurerm'
-              command: 'import'
-              backendServiceArm: 'devOps-connection'
+              command: 'cli'
               environmentServiceNameAzureRM: 'devOps-connection'
-              importTarget: 'azurerm_resource_group.netflix'
-              importId: '/subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone'
+              commandOptions: 'import azurerm_resource_group.netflix /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone'
 
   - stage: Validate
     displayName: 'Validate and Plan'
