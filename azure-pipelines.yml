@@ -76,9 +76,25 @@ stages:
  
  - stage: Import
     displayName: 'Import Resources'
+    dependsOn: Validate
+    condition: succeeded('Validate')
     jobs:
       - job: ImportResources
         steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: 'latest'
+
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              backendServiceArm: 'devOps-connection'
+              backendAzureRmResourceGroupName: '$(TF_STATE_RG)'
+              backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
+              backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
+              backendAzureRmKey: 'netflix.tfstate'
+
           - task: TerraformTaskV4@4
             displayName: 'Import Resource Group'
             inputs:
