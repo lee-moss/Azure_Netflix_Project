@@ -16,3 +16,6 @@ This project aims to deploy a Netflix clone application using modern DevOps prac
 - Grafana
 - Prometheus
 - Node Exporter
+
+
+![Infrastructure Diagram](diagram.png)
