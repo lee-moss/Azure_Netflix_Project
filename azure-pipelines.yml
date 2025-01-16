@@ -31,7 +31,7 @@ stages:
           - checkout: self
             fetchDepth: 0
             
-          - task: SonarCloudPrepare@1
+          - task: SonarCloudPrepare@2
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
@@ -42,7 +42,7 @@ stages:
                 sonar.qualitygate.timeout=300
                 sonar.branch.name=$(Build.SourceBranchName)
 
-          - task: SonarCloudAnalyze@1
+          - task: SonarCloudAnalyze@2
             displayName: 'Run Analysis'
             continueOnError: true
 
@@ -66,16 +66,22 @@ stages:
               inlineScript: |
                 az account show
                 
-                # Initialize Terraform
+                # Initialize Terraform with variables
                 terraform init `
                   -backend-config="resource_group_name=$(TF_STATE_RG)" `
                   -backend-config="storage_account_name=$(TF_STATE_STORAGE)" `
                   -backend-config="container_name=$(TF_STATE_CONTAINER)" `
                   -backend-config="key=netflix.tfstate"
                 
-                # Run Import Command (without variables since RG doesn't need them)
+                # Run Import Command with required variables
                 pwsh -Command {
                   terraform import `
+                    -var="admin_username=adminuser" `
+                    -var="admin_password=$(admin_password)" `
+                    -var="key_vault_name=$(key_vault_name)" `
+                    -var="key_vault_rg=$(key_vault_rg)" `
+                    -var="admin_username_secret=vm-admin-username" `
+                    -var="admin_password_secret=vm-password" `
                     azurerm_resource_group.netflix `
                     /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone
                 }
