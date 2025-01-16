@@ -44,7 +44,7 @@ stages:
           - checkout: self
             fetchDepth: 0
             
-          - task: SonarCloudPrepare@5
+          - task: SonarCloudPrepare@1
             displayName: 'Prepare SonarCloud Analysis'
             inputs:
               SonarCloud: 'SonarCloud'
@@ -56,10 +56,10 @@ stages:
                 sonar.projectName=$(SONAR_PROJECT_NAME)
                 sonar.verbose=true
 
-          - task: SonarCloudAnalyze@5
+          - task: SonarCloudAnalyze@1
             displayName: 'Run Code Analysis'
 
-          - task: SonarCloudPublish@5
+          - task: SonarCloudPublish@1
             displayName: 'Publish Quality Gate Result'
             inputs:
               pollingTimeoutSec: '300'
