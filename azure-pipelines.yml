@@ -65,31 +65,26 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az account show
+                
+                # Initialize Terraform
+                terraform init `
+                  -backend-config="resource_group_name=$(TF_STATE_RG)" `
+                  -backend-config="storage_account_name=$(TF_STATE_STORAGE)" `
+                  -backend-config="container_name=$(TF_STATE_CONTAINER)" `
+                  -backend-config="key=netflix.tfstate"
 
-          - task: TerraformTaskV4@4
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              backendServiceArm: 'devOps-connection'
-              backendAzureRmResourceGroupName: '$(TF_STATE_RG)'
-              backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
-              backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
-              backendAzureRmKey: 'netflix.tfstate'
-
-          - task: PowerShell@2
-            displayName: 'Import Resource Group'
-            inputs:
-              targetType: 'inline'
-              script: |
-                terraform import `
-                  -var="admin_username=adminuser" `
-                  -var="admin_password=$(admin_password)" `
-                  -var="key_vault_name=$(key_vault_name)" `
-                  -var="key_vault_rg=$(key_vault_rg)" `
-                  -var="admin_username_secret=vm-admin-username" `
-                  -var="admin_password_secret=vm-password" `
-                  azurerm_resource_group.netflix `
-                  /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone
+                # Run Import Command
+                pwsh -Command {
+                  terraform import `
+                    -var="admin_username=adminuser" `
+                    -var="admin_password=$(admin_password)" `
+                    -var="key_vault_name=$(key_vault_name)" `
+                    -var="key_vault_rg=$(key_vault_rg)" `
+                    -var="admin_username_secret=vm-admin-username" `
+                    -var="admin_password_secret=vm-password" `
+                    azurerm_resource_group.netflix `
+                    /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone
+                }
 
   - stage: Validate
     displayName: 'Validate and Plan'
