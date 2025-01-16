@@ -31,7 +31,8 @@ stages:
           - checkout: self
             fetchDepth: 0
             
-          - task: SonarCloudPrepare@1
+          - task: SonarCloudPrepare@2
+            displayName: 'Prepare SonarCloud Analysis'
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
@@ -45,11 +46,11 @@ stages:
                 sonar.projectKey=netflix-clone
                 sonar.projectName=netflix-clone
 
-          - task: SonarCloudAnalyze@1
-            displayName: 'Run Analysis'
-            continueOnError: true
+          - task: SonarCloudAnalyze@2
+            displayName: 'Run Code Analysis'
 
-          - task: SonarCloudPublish@1
+          - task: SonarCloudPublish@2
+            displayName: 'Publish Quality Gate Result'
             inputs:
               pollingTimeoutSec: '300'
 

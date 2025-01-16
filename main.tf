@@ -16,9 +16,9 @@ resource azurerm_network_security_group nsg {
       direction                  = security_rule.value.direction
       access                     = security_rule.value.access
       protocol                   = security_rule.value.protocol
-      source_port_range         = security_rule.value.source_port_range
-      destination_port_range    = security_rule.value.destination_port_range
-      source_address_prefix     = security_rule.value.source_address_prefix
+      source_port_range          = security_rule.value.source_port_range
+      destination_port_range     = security_rule.value.destination_port_range
+      source_address_prefix      = security_rule.value.source_address_prefix
       destination_address_prefix = security_rule.value.destination_address_prefix
     }
   }
@@ -128,3 +128,4 @@ resource azurerm_storage_container tfstate-con {
   storage_account_name    = azurerm_storage_account.tfstate.name #'name' is deprecated but ID will not work
   container_access_type = "private"
 }
+
