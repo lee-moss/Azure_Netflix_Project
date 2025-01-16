@@ -31,7 +31,7 @@ stages:
           - checkout: self
             fetchDepth: 0
             
-          - task: SonarCloud@1
+          - task: SonarCloudPrepare@1
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
@@ -44,6 +44,10 @@ stages:
                 sonar.sources=.
                 sonar.projectKey=netflix-clone
                 sonar.projectName=netflix-clone
+
+          - task: SonarCloudAnalyze@1
+            displayName: 'Run Analysis'
+            continueOnError: true
 
           - task: SonarCloudPublish@1
             inputs:
