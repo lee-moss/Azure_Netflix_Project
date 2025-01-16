@@ -8,19 +8,28 @@ resource azurerm_network_security_group nsg {
   location            = azurerm_resource_group.netflix.location
   resource_group_name = azurerm_resource_group.netflix.name
 
-  dynamic "security_rule" {
-    for_each = local.security_rule
-    content {
-      name                       = security_rule.value.name
-      priority                   = security_rule.value.priority
-      direction                  = security_rule.value.direction
-      access                     = security_rule.value.access
-      protocol                   = security_rule.value.protocol
-      source_port_range          = security_rule.value.source_port_range
-      destination_port_range     = security_rule.value.destination_port_range
-      source_address_prefix      = security_rule.value.source_address_prefix
-      destination_address_prefix = security_rule.value.destination_address_prefix
-    }
+  security_rule {
+    name                       = "SSH"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "HTTP"
+    priority                   = 200
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
   }
 }
 
@@ -72,12 +81,13 @@ resource azurerm_network_interface nic {
 }
 
 resource azurerm_linux_virtual_machine vm1 {
-  name                = "vm1"
-  resource_group_name = azurerm_resource_group.netflix.name
-  location            = azurerm_resource_group.netflix.location
-  size                = "Standard_F2"
-  admin_username      = azurerm_key_vault_secret.admin_username.value
-  admin_password      = azurerm_key_vault_secret.admin_password.value
+  name                            = "vm1"
+  resource_group_name             = azurerm_resource_group.netflix.name
+  location                        = azurerm_resource_group.netflix.location
+  size                            = "Standard_F2"
+  admin_username                  = azurerm_key_vault_secret.admin_username.value
+  admin_password                  = azurerm_key_vault_secret.admin_password.value
+  disable_password_authentication = false
   network_interface_ids = [
     azurerm_network_interface.nic.id,
   ]
