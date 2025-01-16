@@ -37,10 +37,7 @@ stages:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
               scannerMode: 'CLI'
-              configMode: 'manual'
-              cliProjectKey: 'Azure-Netflix'
-              cliProjectName: 'Azure-Netflix'
-              cliSources: '.'
+              configMode: 'file'
               extraProperties: |
                 sonar.qualitygate.wait=false
                 sonar.qualitygate.timeout=300
