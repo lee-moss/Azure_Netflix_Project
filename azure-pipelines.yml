@@ -10,6 +10,13 @@ pr:
       - '**/*.tfvars'
       - 'azure-pipelines.yml'
 
+resources:
+  repositories:
+    - repository: self
+      type: github
+      name: lee-moss/Azure_Netflix_Project
+      endpoint: GitHub
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -21,6 +28,12 @@ variables:
     value: 'netflixstatefile'
   - name: TF_STATE_CONTAINER
     value: 'tfstate'
+  - name: SONAR_PROJECT_KEY
+    value: 'LAM5_Azure-Netflix'
+  - name: SONAR_ORGANIZATION
+    value: 'lam5'
+  - name: SONAR_PROJECT_NAME
+    value: 'Azure-Netflix'
 
 stages:
   - stage: Analysis
@@ -39,6 +52,8 @@ stages:
               scannerMode: 'CLI'
               configMode: 'file'
               extraProperties: |
+                sonar.projectKey=$(SONAR_PROJECT_KEY)
+                sonar.projectName=$(SONAR_PROJECT_NAME)
                 sonar.verbose=true
 
           - task: SonarCloudAnalyze@2
