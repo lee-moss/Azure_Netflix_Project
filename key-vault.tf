@@ -4,6 +4,12 @@ resource azurerm_key_vault_secret NetflixSecret {
   key_vault_id = data.azurerm_key_vault.netflix.id
 }
 
+resource "random_string" "random" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
 resource "azurerm_key_vault" "netflix" {
   name                = "netflix-kv-${random_string.random.result}"
   location            = azurerm_resource_group.netflix.location
@@ -22,19 +28,13 @@ resource "azurerm_key_vault" "netflix" {
 }
 
 resource "azurerm_key_vault_secret" "admin_username" {
-  name         = var.admin_username_secret
+  name         = "vm-admin-username"
   value        = var.admin_username
   key_vault_id = azurerm_key_vault.netflix.id
 }
 
 resource "azurerm_key_vault_secret" "admin_password" {
-  name         = var.admin_password_secret
+  name         = "vm-password"
   value        = var.admin_password
   key_vault_id = azurerm_key_vault.netflix.id
-}
-
-resource "random_string" "random" {
-  length  = 8
-  special = false
-  upper   = false
 }

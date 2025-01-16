@@ -76,8 +76,8 @@ resource azurerm_linux_virtual_machine vm1 {
   resource_group_name = azurerm_resource_group.netflix.name
   location            = azurerm_resource_group.netflix.location
   size                = "Standard_F2"
-  admin_username      = data.azurerm_key_vault_secret.admin_username.value
-  admin_password      = data.azurerm_key_vault_secret.admin_password.value
+  admin_username      = azurerm_key_vault_secret.admin_username.value
+  admin_password      = azurerm_key_vault_secret.admin_password.value
   network_interface_ids = [
     azurerm_network_interface.nic.id,
   ]

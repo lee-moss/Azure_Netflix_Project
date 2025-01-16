@@ -37,14 +37,14 @@ stages:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
               scannerMode: 'CLI'
-              configMode: 'file'
+              configMode: 'manual'
+              cliProjectKey: 'Azure-Netflix'
+              cliProjectName: 'Azure-Netflix'
+              cliSources: '.'
               extraProperties: |
                 sonar.qualitygate.wait=false
                 sonar.qualitygate.timeout=300
                 sonar.branch.name=$(Build.SourceBranchName)
-                sonar.sources=.
-                sonar.projectKey=netflix-clone
-                sonar.projectName=netflix-clone
 
           - task: SonarCloudAnalyze@2
             displayName: 'Run Code Analysis'
