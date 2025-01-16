@@ -31,7 +31,7 @@ stages:
           - checkout: self
             fetchDepth: 0
             
-          - task: SonarCloudPrepare@2
+          - task: SonarCloud@1
             inputs:
               SonarCloud: 'SonarCloud'
               organization: 'lam5'
@@ -41,53 +41,18 @@ stages:
                 sonar.qualitygate.wait=false
                 sonar.qualitygate.timeout=300
                 sonar.branch.name=$(Build.SourceBranchName)
+                sonar.sources=.
+                sonar.projectKey=netflix-clone
+                sonar.projectName=netflix-clone
 
-          - task: SonarCloudAnalyze@2
-            displayName: 'Run Analysis'
-            continueOnError: true
-
-  - stage: Import
-    displayName: 'Import Resources'
-    dependsOn: Analysis
-    condition: succeeded('Analysis')
-    jobs:
-      - job: ImportResources
-        steps:
-          - task: TerraformInstaller@1
+          - task: SonarCloudPublish@1
             inputs:
-              terraformVersion: 'latest'
-
-          - task: AzureCLI@2
-            displayName: 'Azure CLI Login and Import'
-            inputs:
-              azureSubscription: 'devOps-connection'
-              scriptType: 'pscore'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                # Set Azure CLI to use subscription
-                az account show
-                
-                # Set environment variables for backend
-                $env:ARM_ACCESS_KEY = $(az storage account keys list --resource-group $(TF_STATE_RG) --account-name $(TF_STATE_STORAGE) --query '[0].value' -o tsv)
-                
-                # Initialize Terraform
-                terraform init
-                
-                # Run Import Command
-                terraform import `
-                  -var="admin_username=adminuser" `
-                  -var="admin_password=$(admin_password)" `
-                  -var="key_vault_name=$(key_vault_name)" `
-                  -var="key_vault_rg=$(key_vault_rg)" `
-                  -var="admin_username_secret=vm-admin-username" `
-                  -var="admin_password_secret=vm-password" `
-                  azurerm_resource_group.netflix `
-                  /subscriptions/488dbdc5-85c6-402d-811f-eb47d17f391f/resourceGroups/Azure-Netflix-Clone
+              pollingTimeoutSec: '300'
 
   - stage: Validate
     displayName: 'Validate and Plan'
-    dependsOn: Import
-    condition: succeeded('Import')
+    dependsOn: Analysis
+    condition: succeeded('Analysis')
     jobs:
       - job: ValidateAndPlan
         steps:
