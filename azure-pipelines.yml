@@ -39,9 +39,7 @@ stages:
               scannerMode: 'CLI'
               configMode: 'file'
               extraProperties: |
-                sonar.qualitygate.wait=false
-                sonar.qualitygate.timeout=300
-                sonar.branch.name=$(Build.SourceBranchName)
+                sonar.verbose=true
 
           - task: SonarCloudAnalyze@2
             displayName: 'Run Code Analysis'
@@ -50,6 +48,7 @@ stages:
             displayName: 'Publish Quality Gate Result'
             inputs:
               pollingTimeoutSec: '300'
+              waitForQualityGate: true
 
   - stage: Validate
     displayName: 'Validate and Plan'
