@@ -25,9 +25,9 @@ variables:
   - name: TF_STATE_RG
     value: 'NetflixProject'
   - name: TF_STATE_STORAGE
-    value: 'netflixstatefile'
+    value: 'tfstatest'
   - name: TF_STATE_CONTAINER
-    value: 'tfstate'
+    value: 'tfstate-con'
   - name: SONAR_PROJECT_KEY
     value: 'LAM5_Azure-Netflix'
   - name: SONAR_ORGANIZATION
@@ -80,7 +80,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'init'
-              backendServiceArm: 'Azure-Netflix-Project'
+              backendServiceArm: 'devOps-connection'
               backendAzureRmResourceGroupName: '$(TF_STATE_RG)'
               backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
               backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
@@ -91,8 +91,8 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'
-              environmentServiceNameAzureRM: 'Azure-Netflix-Project'
-              commandOptions: '-detailed-exitcode -var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject"'
+              environmentServiceNameAzureRM: 'devOps-connection'
+              commandOptions: '-var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject"'
 
   # - stage: Deploy
   #   displayName: 'Deploy Infrastructure'
@@ -105,21 +105,21 @@ stages:
   #           inputs:
   #             terraformVersion: 'latest'
 
-          # - task: TerraformTaskV4@4
-          #   inputs:
-          #     provider: 'azurerm'
-          #     command: 'init'
-          #     backendServiceArm: 'Azure-Netflix-Project'
-          #     backendAzureRmResourceGroupName: '$(TF_STATE_RG)'
-          #     backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
-          #     backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
-          #     backendAzureRmKey: 'netflix.tfstate'
-          #     commandOptions: '-upgrade'
+  #         - task: TerraformTaskV4@4
+  #           inputs:
+  #             provider: 'azurerm'
+  #             command: 'init'
+  #             backendServiceArm: 'devOps-connection'
+  #             backendAzureRmResourceGroupName: '$(TF_STATE_RG)'
+  #             backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
+  #             backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
+  #             backendAzureRmKey: 'netflix.tfstate'
+  #             commandOptions: '-upgrade'
 
-          # - task: TerraformTaskV4@4
-          #   inputs:
-          #     provider: 'azurerm'
-          #     command: 'apply'
-          #     environmentServiceNameAzureRM: 'Azure-Netflix-Project'
-          #     commandOptions: '-var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject"'
+  #         - task: TerraformTaskV4@4
+  #           inputs:
+  #             provider: 'azurerm'
+  #             command: 'apply'
+  #             environmentServiceNameAzureRM: 'devOps-connection'
+  #             commandOptions: '-var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject"'
 
