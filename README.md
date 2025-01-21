@@ -13,6 +13,7 @@ This project contains the Infrastructure as Code (IaC) for deploying a Netflix c
 - GitHub Account
 - Terraform (latest version)
 - Azure CLI
+- SonarQube Cloud Account
 
 ## Project Structure
 
