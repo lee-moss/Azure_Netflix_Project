@@ -80,7 +80,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'init'
-              backendServiceArm: 'devOps-connection'
+              backendServiceArm: 'Azure-Netflix-Project'
               backendAzureRmResourceGroupName: '$(TF_STATE_RG)'
               backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
               backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
@@ -91,7 +91,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'
-              environmentServiceNameAzureRM: 'devOps-connection'
+              environmentServiceNameAzureRM: 'Azure-Netflix-Project'
               commandOptions: '-detailed-exitcode -var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"'
 
   # - stage: Deploy
@@ -109,7 +109,7 @@ stages:
           #   inputs:
           #     provider: 'azurerm'
           #     command: 'init'
-          #     backendServiceArm: 'devOps-connection'
+          #     backendServiceArm: 'Azure-Netflix-Project'
           #     backendAzureRmResourceGroupName: '$(TF_STATE_RG)'
           #     backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
           #     backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
@@ -120,6 +120,6 @@ stages:
           #   inputs:
           #     provider: 'azurerm'
           #     command: 'apply'
-          #     environmentServiceNameAzureRM: 'devOps-connection'
+          #     environmentServiceNameAzureRM: 'Azure-Netflix-Project'
           #     commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"'
 
