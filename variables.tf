@@ -23,3 +23,9 @@ variable "admin_password_secret" {
   type = string
   default = "vm-password"
 }
+
+variable "my_ip_address" {
+  description = "Your IP address for SSH access"
+  type        = string
+  default     = ""
+}
