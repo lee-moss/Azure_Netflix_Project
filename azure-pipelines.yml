@@ -92,7 +92,7 @@ stages:
               provider: 'azurerm'
               command: 'plan'
               environmentServiceNameAzureRM: 'devOps-connection'
-              commandOptions: '-var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject"'
+              commandOptions: '-var="admin_password=$(admin_password)" -var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject" -var="my_ip_address=$(my_ip_address)"'
 
   # - stage: Deploy
   #   displayName: 'Deploy Infrastructure'
@@ -121,5 +121,5 @@ stages:
   #             provider: 'azurerm'
   #             command: 'apply'
   #             environmentServiceNameAzureRM: 'devOps-connection'
-  #             commandOptions: '-var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject"'
+  #             commandOptions: '-var="admin_password=$(admin_password)" -var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject" -var="my_ip_address=$(my_ip_address)"'
 
