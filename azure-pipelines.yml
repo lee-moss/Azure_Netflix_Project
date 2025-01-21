@@ -92,7 +92,7 @@ stages:
               provider: 'azurerm'
               command: 'plan'
               environmentServiceNameAzureRM: 'Azure-Netflix-Project'
-              commandOptions: '-detailed-exitcode -var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"'
+              commandOptions: '-detailed-exitcode -var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject"'
 
   # - stage: Deploy
   #   displayName: 'Deploy Infrastructure'
@@ -121,5 +121,5 @@ stages:
           #     provider: 'azurerm'
           #     command: 'apply'
           #     environmentServiceNameAzureRM: 'Azure-Netflix-Project'
-          #     commandOptions: '-var="admin_username=adminuser" -var="admin_password=$(admin_password)" -var="key_vault_name=$(key_vault_name)" -var="key_vault_rg=$(key_vault_rg)" -var="admin_username_secret=vm-admin-username" -var="admin_password_secret=vm-password"'
+          #     commandOptions: '-var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject"'
 
