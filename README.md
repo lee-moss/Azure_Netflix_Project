@@ -126,6 +126,5 @@ This project contains the Infrastructure as Code (IaC) for deploying a Netflix c
 - Grafana
 - Prometheus
 - SonarQube Cloud
-- Prometheus
 - Node Exporter
 
