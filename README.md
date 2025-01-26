@@ -4,6 +4,8 @@ THIS IS AN ONGOING PROJECT AND WILL BE UPDATED FREQUENTLY
 
 This project contains the Infrastructure as Code (IaC) for deploying a Netflix clone application on Azure using Terraform and Azure DevOps for CI/CD.
 
+![Infrastructure Diagram](diagram.png)
+
 ## Prerequisites
 
 - Azure Subscription
@@ -11,6 +13,7 @@ This project contains the Infrastructure as Code (IaC) for deploying a Netflix c
 - GitHub Account
 - Terraform (latest version)
 - Azure CLI
+- SonarQube Cloud Account
 
 ## Project Structure
 
@@ -164,7 +167,6 @@ Each module contains:
 - Kubernetes
 - Grafana
 - Prometheus
-- Node Exporter
-- Prometheus
+- SonarQube Cloud
 - Node Exporter
 
