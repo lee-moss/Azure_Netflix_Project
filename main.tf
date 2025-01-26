@@ -1,23 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 3.0"
-    }
-  }
-}
-
-provider azurerm {
-  features {
-    key_vault {
-      purge_soft_delete_on_destroy    = true
-      recover_soft_deleted_key_vaults = true
-    }
-  }
-}
-
-data azurerm_client_config current {}
-
 resource azurerm_resource_group netflix {
   name     = "Azure-Netflix-Project"
   location = "UK West"
@@ -36,7 +16,7 @@ resource azurerm_storage_container tfstate {
   name                     = "tfstate"
   storage_account_name     = azurerm_storage_account.tfstate.name
   container_access_type    = "private"
-}
+}   
 
 # Networking Module
 module networking {
