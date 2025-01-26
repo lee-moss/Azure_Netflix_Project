@@ -18,6 +18,11 @@ variable tenant_id {
   type        = string
 }
 
+variable admin_object_id {
+  description = "Object ID of the admin user/service principal"
+  type        = string
+}
+
 variable my_ip_address {
   description = "IP address to allow access to Key Vault"
   type        = string
@@ -38,6 +43,18 @@ variable admin_username_secret_name {
   description = "Name of the admin username secret in Key Vault"
   type        = string
   default     = "vm-admin-username"
+}
+
+variable tmdb_api_key {
+  description = "API Key for The Movie Database (TMDB)"
+  type        = string
+  sensitive   = true
+}
+
+variable tmdb_access_token {
+  description = "Read Access Token for The Movie Database (TMDB)"
+  type        = string
+  sensitive   = true
 }
 
 variable tags {

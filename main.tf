@@ -42,40 +42,21 @@ module networking {
   }
 }
 
-# Key Vault Module
-module keyvault {
-  source = "./modules/keyvault"
-
-  resource_group_name = azurerm_resource_group.netflix.name
-  location           = azurerm_resource_group.netflix.location
-  tenant_id          = data.azurerm_client_config.current.tenant_id
-  admin_object_id    = data.azurerm_client_config.current.object_id
-  my_ip_address      = var.my_ip_address
-
-  allowed_subnet_ids = [module.networking.management_subnet_id]
-  admin_username     = var.admin_username
-  tmdb_api_key       = var.tmdb_api_key
-  tmdb_access_token  = var.tmdb_access_token
-
-  tags = {
-    Environment = "Development"
-    Project     = "Netflix Project"
-    Terraform   = "true"
-  }
-}
-
 # Security Module
 module security {
   source = "./modules/security"
 
   resource_group_name = azurerm_resource_group.netflix.name
-  location           = azurerm_resource_group.netflix.location
-  key_vault_name     = var.key_vault_name
-  tenant_id          = data.azurerm_client_config.current.tenant_id
-  my_ip_address      = var.my_ip_address
+  location            = azurerm_resource_group.netflix.location
+  key_vault_name      = var.key_vault_name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  admin_object_id     = data.azurerm_client_config.current.object_id
+  my_ip_address       = var.my_ip_address
 
-  allowed_subnet_ids = [module.networking.management_subnet_id]
-  admin_username     = var.admin_username
+  allowed_subnet_ids  = [module.networking.management_subnet_id]
+  admin_username      = var.admin_username
+  tmdb_api_key        = var.tmdb_api_key
+  tmdb_access_token   = var.tmdb_access_token
 
   tags = {
     Environment = "Development"
@@ -89,12 +70,12 @@ module compute {
   source = "./modules/compute"
 
   resource_group_name = azurerm_resource_group.netflix.name
-  location           = azurerm_resource_group.netflix.location
-  subnet_id          = module.networking.management_subnet_id
-  key_vault_id       = module.security.key_vault_id
-  vm_identity_id     = module.security.vm_identity_id
-  admin_username     = var.admin_username
-  custom_data        = base64encode(file("prom_and_graf.ps1"))
+  location            = azurerm_resource_group.netflix.location
+  subnet_id           = module.networking.management_subnet_id
+  key_vault_id        = module.security.key_vault_id
+  vm_identity_id      = module.security.vm_identity_id
+  admin_username      = var.admin_username
+  custom_data         = base64encode(file("prom_and_graf.ps1"))
 
   tags = {
     Environment = "Development"
@@ -105,8 +86,8 @@ module compute {
 
 # Kubernetes Module
 module kubernetes {
-  source = "./modules/kubernetes"
-  depends_on = [module.networking]
+  source     = "./modules/kubernetes"
+  depends_on = [module.networking, module.security]
 
   resource_group_name = azurerm_resource_group.netflix.name
   location           = azurerm_resource_group.netflix.location
@@ -115,10 +96,10 @@ module kubernetes {
   subnet_id          = module.networking.aks_subnet_id
   acr_id             = module.security.acr_id
 
-  node_count     = 2
-  node_size      = "Standard_DS2_v2"
-  min_node_count = 1
-  max_node_count = 5
+  node_count         = 2
+  node_size          = "Standard_DS2_v2"
+  min_node_count     = 1
+  max_node_count     = 5
 
   tags = {
     Environment = "Development"
