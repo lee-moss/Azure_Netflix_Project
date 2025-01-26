@@ -41,8 +41,15 @@ variable admin_username {
   type        = string
 }
 
-variable netflix_secret_value {
-  description = "Value for the Netflix secret"
+# TMDB API Variables
+variable tmdb_api_key {
+  description = "API Key for The Movie Database (TMDB)"
+  type        = string
+  sensitive   = true
+}
+
+variable tmdb_access_token {
+  description = "Read Access Token for The Movie Database (TMDB)"
   type        = string
   sensitive   = true
 }

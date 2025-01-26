@@ -1,3 +1,23 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+  }
+}
+
+provider azurerm {
+  features {
+    key_vault {
+      purge_soft_delete_on_destroy    = true
+      recover_soft_deleted_key_vaults = true
+    }
+  }
+}
+
+data azurerm_client_config current {}
+
 resource azurerm_resource_group netflix {
   name     = "Azure-Netflix-Project"
   location = "UK West"
@@ -53,7 +73,8 @@ module keyvault {
   allowed_subnet_ids    = [module.networking.management_subnet_id]
   vm_identity_object_id = module.compute.vm_identity_id
   admin_username        = var.admin_username
-  netflix_secret_value  = var.netflix_secret_value
+  tmdb_api_key          = var.tmdb_api_key
+  tmdb_access_token     = var.tmdb_access_token
 
   tags = {
     Environment = "Development"

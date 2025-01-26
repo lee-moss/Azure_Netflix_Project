@@ -52,8 +52,15 @@ resource azurerm_key_vault_secret admin_username {
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
-resource azurerm_key_vault_secret netflix_secret {
-  name         = "NetflixSecret"
-  value        = var.netflix_secret_value
+# TMDB Secrets
+resource azurerm_key_vault_secret tmdb_api_key {
+  name         = "tmdb-api-key"
+  value        = var.tmdb_api_key
   key_vault_id = azurerm_key_vault.keyvault.id
-} 
+}
+
+resource azurerm_key_vault_secret tmdb_access_token {
+  name         = "tmdb-access-token"
+  value        = var.tmdb_access_token
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
