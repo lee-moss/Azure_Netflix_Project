@@ -19,8 +19,49 @@ This project contains the Infrastructure as Code (IaC) for deploying a Netflix c
 ├── variables.tf         # Variable definitions
 ├── terraform.tfvars     # Variable values (do not commit sensitive data)
 ├── backend.tf           # Backend configuration for state management
-└── azure-pipelines.yml  # Azure DevOps pipeline definition
+├── azure-pipelines.yml  # Azure DevOps pipeline definition
+└── modules/             # Terraform modules
+    ├── compute/         # VM and compute resources
+    ├── keyvault/        # Key Vault configuration
+    ├── kubernetes/      # AKS cluster setup
+    ├── monitoring/      # Prometheus and Grafana
+    ├── networking/      # VNet, subnets, NSG, NAT
+    └── security/        # Security configurations
 ```
+
+## Module Structure
+
+Each module contains:
+- `main.tf` - Main module configuration
+- `variables.tf` - Module input variables
+- `outputs.tf` - Module outputs
+
+### Key Modules
+
+1. **Networking Module**
+   - Virtual Network with multiple subnets
+   - Network Security Groups
+   - NAT Gateway for outbound traffic
+
+2. **Compute Module**
+   - Linux VM configuration
+   - Network interface
+   - SSH key management
+
+3. **Security Module**
+   - Key Vault setup
+   - Access policies
+   - Secret management
+
+4. **Kubernetes Module**
+   - AKS cluster configuration
+   - Node pools
+   - Monitoring add-on
+
+5. **Monitoring Module**
+   - Prometheus setup
+   - Grafana configuration
+   - Storage account for metrics
 
 ## Setting Up the Pipeline
 
@@ -82,6 +123,7 @@ This project contains the Infrastructure as Code (IaC) for deploying a Netflix c
   - Prometheus monitoring
   - Grafana dashboards
 - Azure Key Vault for secrets
+- AKS cluster for containerised workloads
 
 ## Security Features
 
@@ -117,7 +159,7 @@ This project contains the Infrastructure as Code (IaC) for deploying a Netflix c
 
 - Azure DevOps
 - Terraform
-- Powershell
+- Powershell/Bash
 - Docker
 - Kubernetes
 - Grafana
@@ -126,4 +168,3 @@ This project contains the Infrastructure as Code (IaC) for deploying a Netflix c
 - Prometheus
 - Node Exporter
 
-![Infrastructure Diagram](diagram.png)
