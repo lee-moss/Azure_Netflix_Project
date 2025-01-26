@@ -1,3 +1,5 @@
+data azurerm_client_config current {}
+
 resource azurerm_resource_group netflix {
   name     = "Azure-Netflix-Project"
   location = "UK West"
