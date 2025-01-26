@@ -29,11 +29,6 @@ variable allowed_subnet_ids {
   default     = []
 }
 
-variable vm_identity_object_id {
-  description = "Object ID of the VM's managed identity"
-  type        = string
-}
-
 variable admin_username {
   description = "Admin username to store in Key Vault"
   type        = string

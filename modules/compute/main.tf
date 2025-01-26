@@ -1,6 +1,6 @@
 # Network Interface
 resource azurerm_network_interface nic {
-  name                = "${var.vm_name}-nic"
+  name                = "vm-nic"
   location            = var.location
   resource_group_name = var.resource_group_name
 
@@ -13,40 +13,35 @@ resource azurerm_network_interface nic {
   tags = var.tags
 }
 
-# Managed Identity
-resource azurerm_user_assigned_identity vm_identity {
-  name                = "${var.vm_name}-identity"
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  tags                = var.tags
-}
-
 # SSH Key
 resource tls_private_key ssh_key {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-# Store SSH Key in Key Vault
+# Store SSH private key in Key Vault
 resource azurerm_key_vault_secret ssh_private_key {
-  name         = "${var.vm_name}-ssh-private-key"
+  name         = "ssh-private-key"
   value        = tls_private_key.ssh_key.private_key_pem
   key_vault_id = var.key_vault_id
 }
 
 # Virtual Machine
 resource azurerm_linux_virtual_machine vm {
-  name                            = var.vm_name
-  resource_group_name             = var.resource_group_name
-  location                        = var.location
-  size                            = var.vm_size
-  admin_username                  = var.admin_username
-  disable_password_authentication = true
-  custom_data                     = var.custom_data
+  name                = "netflix-vm"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  size                = "Standard_DS1_v2"
+  admin_username      = var.admin_username
+  custom_data         = var.custom_data
+
+  network_interface_ids = [
+    azurerm_network_interface.nic.id
+  ]
 
   identity {
-    type = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.vm_identity.id]
+    type         = "UserAssigned"
+    identity_ids = [var.vm_identity_id]
   }
 
   admin_ssh_key {
@@ -54,20 +49,16 @@ resource azurerm_linux_virtual_machine vm {
     public_key = tls_private_key.ssh_key.public_key_openssh
   }
 
-  network_interface_ids = [
-    azurerm_network_interface.nic.id
-  ]
-
   os_disk {
     caching              = "ReadWrite"
-    storage_account_type = var.os_disk_type
+    storage_account_type = "Standard_LRS"
   }
 
   source_image_reference {
-    publisher = var.image_publisher
-    offer     = var.image_offer
-    sku       = var.image_sku
-    version   = var.image_version
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
+    version   = "latest"
   }
 
   tags = var.tags
