@@ -33,18 +33,18 @@ resource azurerm_storage_account tfstate {
 }
 
 resource azurerm_storage_container tfstate {
-  name                  = "tfstate"
-  storage_account_name  = azurerm_storage_account.tfstate.name
-  container_access_type = "private"
+  name                     = "tfstate"
+  storage_account_name     = azurerm_storage_account.tfstate.name
+  container_access_type    = "private"
 }
 
 # Networking Module
 module networking {
   source = "./modules/networking"
 
-  resource_group_name = azurerm_resource_group.netflix.name
-  location            = azurerm_resource_group.netflix.location
-  my_ip_address       = var.my_ip_address
+  resource_group_name      = azurerm_resource_group.netflix.name
+  location                 = azurerm_resource_group.netflix.location
+  my_ip_address            = var.my_ip_address
 
   vnet_name                = "netflix-network"
   address_space            = ["10.0.0.0/16"]
@@ -110,11 +110,11 @@ module compute {
   depends_on = [module.security]
 
   resource_group_name = azurerm_resource_group.netflix.name
-  location           = azurerm_resource_group.netflix.location
-  subnet_id          = module.networking.management_subnet_id
-  key_vault_id       = module.security.key_vault_id
-  admin_username     = var.admin_username
-  custom_data        = base64encode(file("prom_and_graf.ps1"))
+  location            = azurerm_resource_group.netflix.location
+  subnet_id           = module.networking.management_subnet_id
+  key_vault_id        = module.security.key_vault_id
+  admin_username      = var.admin_username
+  custom_data         = base64encode(file("prom_and_graf.ps1"))
 
   tags = {
     Environment = "Development"
