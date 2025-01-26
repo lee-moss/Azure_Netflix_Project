@@ -1,11 +1,21 @@
 output key_vault_id {
   description = "ID of the Key Vault"
-  value       = azurerm_key_vault.vault.id
+  value       = azurerm_key_vault.keyvault.id
 }
 
 output key_vault_uri {
   description = "URI of the Key Vault"
   value       = azurerm_key_vault.vault.vault_uri
+}
+
+output acr_id {
+  description = "ID of the Azure Container Registry"
+  value       = azurerm_container_registry.acr.id
+}
+
+output acr_login_server {
+  description = "Login server for the Azure Container Registry"
+  value       = azurerm_container_registry.acr.login_server
 }
 
 output admin_username_secret_id {

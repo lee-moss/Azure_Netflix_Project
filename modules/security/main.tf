@@ -44,4 +44,22 @@ resource azurerm_key_vault_secret admin_username {
   name         = var.admin_username_secret_name
   value        = var.admin_username
   key_vault_id = azurerm_key_vault.vault.id
+}
+
+# Create ACR (Azure Container Registry)
+resource azurerm_container_registry acr {
+  name                = "netflixacr${random_string.random.result}"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  sku                = "Standard"
+  admin_enabled      = false  # Using Azure AD authentication instead
+
+  tags = var.tags
+}
+
+# Grant AcrPull role to VM's managed identity
+resource azurerm_role_assignment vm_acr_pull {
+  scope                = azurerm_container_registry.acr.id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_user_assigned_identity.vm_identity.principal_id
 } 
