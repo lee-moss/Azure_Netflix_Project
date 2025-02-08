@@ -73,14 +73,20 @@ stages:
               path: '$(System.DefaultWorkingDirectory)'
               severity: 'CRITICAL,HIGH'
               format: 'table'
-              template: ''
-              outputPath: '$(Build.ArtifactStagingDirectory)/trivy-results.txt'
+              output: 'trivy-results.txt'
               exitCode: '1'
+
+          - bash: |
+              mkdir -p $(Build.ArtifactStagingDirectory)
+              cp trivy-results.txt $(Build.ArtifactStagingDirectory)/trivy-results.txt || true
+              ls -la $(Build.ArtifactStagingDirectory)
+            displayName: 'Prepare Trivy Results'
+            condition: succeededOrFailed()
 
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Trivy Results'
             inputs:
-              targetPath: '$(Build.ArtifactStagingDirectory)/trivy-results.txt'
+              targetPath: '$(Build.ArtifactStagingDirectory)'
               artifact: 'TrivyReport'
             condition: succeededOrFailed()
 
