@@ -70,16 +70,18 @@ stages:
             inputs:
               version: 'latest'
               docker: true
+              scanType: 'fs'
               path: '$(System.DefaultWorkingDirectory)'
               severity: 'CRITICAL,HIGH'
               exitCode: '1'
-              debug: true
-              options: '--timeout 10m0s'
+              format: 'table'
+              options: '--timeout 10m0s --no-progress'
 
+          # Simple artifact publishing
           - task: PublishBuildArtifacts@1
             displayName: 'Publish Trivy Results'
             inputs:
-              pathToPublish: '$(System.DefaultWorkingDirectory)'
+              pathToPublish: '$(System.DefaultWorkingDirectory)/trivy-results.txt'
               artifactName: 'TrivyResults'
             condition: succeededOrFailed()
 
