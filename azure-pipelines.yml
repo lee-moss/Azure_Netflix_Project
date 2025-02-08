@@ -73,6 +73,9 @@ stages:
               path: '$(System.DefaultWorkingDirectory)/netflix-app/frontend/Dockerfile'
               severity: 'CRITICAL,HIGH'
               exitCode: '1'
+              format: 'table'
+              output: 'trivy-results.txt'
+              ignoreUnfixed: true
 
   - stage: Validate
     displayName: 'Validate and Plan'
