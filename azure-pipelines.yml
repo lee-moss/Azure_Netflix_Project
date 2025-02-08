@@ -73,8 +73,8 @@ stages:
               path: '$(System.DefaultWorkingDirectory)/netflix-app/frontend/Dockerfile'
               severity: 'CRITICAL,HIGH'
               exitCode: '1'
-              format: 'table'
-              output: 'trivy-results.txt'
+              format: 'sarif'
+              output: '$(Build.ArtifactStagingDirectory)/trivy-results.sarif'
               ignoreUnfixed: true
 
   - stage: Validate
