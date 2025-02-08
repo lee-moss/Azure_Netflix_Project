@@ -65,30 +65,17 @@ stages:
               pollingTimeoutSec: '300'
               waitForQualityGate: true
 
-          - bash: |
-              echo "=== Directory Structure Debug ==="
-              echo "1. Current Directory (pwd):"
-              pwd
-              echo "2. System.DefaultWorkingDirectory:"
-              echo $(System.DefaultWorkingDirectory)
-              echo "3. Listing System.DefaultWorkingDirectory contents:"
-              ls -la $(System.DefaultWorkingDirectory)
-              echo "4. Listing parent directory:"
-              ls -la $(System.DefaultWorkingDirectory)/..
-              echo "5. Full directory tree:"
-              tree $(System.DefaultWorkingDirectory)
-            displayName: 'Debug Directory Structure'
-
           - task: trivy@1
             displayName: 'Scan local project'
             inputs:
               version: 'latest'
               scanType: 'fs'
-              path: '/home/vsts/work/1/s'
+              path: '$(System.DefaultWorkingDirectory)'
               severity: 'CRITICAL,HIGH'
               format: 'table'
               output: '$(Build.ArtifactStagingDirectory)/trivy-results.txt'
               exitCode: '1'
+              options: '--skip-dirs .git,.terraform'
 
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Trivy Results'
