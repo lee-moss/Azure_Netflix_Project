@@ -20,6 +20,7 @@ resource azurerm_subnet management {
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = [var.management_subnet_prefix]
+  service_endpoints    = ["Microsoft.KeyVault"]
 }
 
 resource azurerm_subnet db {
@@ -133,7 +134,6 @@ resource azurerm_nat_gateway nat {
   resource_group_name     = var.resource_group_name
   sku_name                = "Standard"
   idle_timeout_in_minutes = 10
-  zones                   = ["1"]
   tags                    = var.tags
 }
 
