@@ -65,15 +65,14 @@ stages:
               pollingTimeoutSec: '300'
               waitForQualityGate: true
 
-          - task: Container-Structure-Test@0
+          - task: AquaSecurityTrivy@1
             displayName: 'Scan Dockerfile with Trivy'
             inputs:
+              version: 'latest'
               scanType: 'fs'
               path: '$(System.DefaultWorkingDirectory)/netflix-app/frontend/Dockerfile'
-              severities: 'CRITICAL,HIGH'
+              severity: 'CRITICAL,HIGH'
               exitCode: '1'
-              format: 'table'
-              output: 'trivy-results.txt'
 
   - stage: Validate
     displayName: 'Validate and Plan'
