@@ -77,6 +77,13 @@ stages:
               output: '$(Build.ArtifactStagingDirectory)/trivy-results.sarif'
               ignoreUnfixed: true
 
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Trivy Results'
+            inputs:
+              pathToPublish: '$(Build.ArtifactStagingDirectory)'
+              artifactName: 'TrivyResults'
+            condition: succeededOrFailed()
+
   - stage: Validate
     displayName: 'Validate and Plan'
     dependsOn: Analysis
