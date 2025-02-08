@@ -73,7 +73,7 @@ stages:
               path: '$(System.DefaultWorkingDirectory)'
               severity: 'CRITICAL,HIGH'
               format: 'table'
-              output: 'trivy-results.txt'
+              output: '$(Build.ArtifactStagingDirectory)/trivy-results.txt'
               exitCode: '1'
 
           - bash: |
