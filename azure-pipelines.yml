@@ -69,18 +69,17 @@ stages:
             displayName: 'Scan local project'
             inputs:
               version: 'latest'
-              scanType: 'fs'
+              docker: true
               path: '$(System.DefaultWorkingDirectory)'
               severity: 'CRITICAL,HIGH'
               exitCode: '1'
-              format: 'sarif'
-              output: '$(Build.ArtifactStagingDirectory)/trivy-results.sarif'
-              ignoreUnfixed: true
+              debug: true
+              options: '--timeout 10m0s'
 
           - task: PublishBuildArtifacts@1
             displayName: 'Publish Trivy Results'
             inputs:
-              pathToPublish: '$(Build.ArtifactStagingDirectory)'
+              pathToPublish: '$(System.DefaultWorkingDirectory)'
               artifactName: 'TrivyResults'
             condition: succeededOrFailed()
 
