@@ -70,7 +70,7 @@ stages:
             inputs:
               version: 'latest'
               scanType: 'fs'
-              path: '$(System.DefaultWorkingDirectory)/netflix-app/frontend/Dockerfile'
+              path: '$(System.DefaultWorkingDirectory)'
               severity: 'CRITICAL,HIGH'
               exitCode: '1'
               format: 'sarif'
