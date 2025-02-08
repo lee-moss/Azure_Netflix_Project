@@ -1,31 +1,22 @@
 trigger:
-  batch: true   # Batch changes if multiple pushes are made
+  batch: true  
   branches:
     include:
       - main
   paths:
     include:
-      - '**/*.tf'
-      - '**/*.tfvars'
-      - 'azure-pipelines.yml'
-      - 'netflix-app/**'
-      - 'modules/**'
-    exclude:
-      - '**/*.md'        # Exclude documentation
-      - '.gitignore'     # Exclude git files
-      - '**/*.txt'       # Exclude text files
-      - '.terraform/**'  # Exclude terraform state/cache
+      - '*'     
+      - '**/*'  
 
 pr:
-  autoCancel: true    # Cancel previous builds if a new commit is pushed
+  autoCancel: true   
   branches:
     include:
       - main
   paths:
     include:
-      - '**/*.tf'
-      - '**/*.tfvars'
-      - 'azure-pipelines.yml'
+      - '*'
+      - '**/*'
 
 resources:
   repositories:
