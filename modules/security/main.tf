@@ -36,7 +36,7 @@ resource azurerm_key_vault vault {
     ]
   }
 
-  # Grant access to the DevOps service principal in initial config
+  # Grant access to the DevOps service principal
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
     object_id = var.devops_object_id
@@ -54,6 +54,42 @@ resource azurerm_key_vault vault {
     ]
   }
 
+  # Grant access to the admin
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = var.admin_object_id
+
+    key_permissions = [
+      "Get", "List", "Create", "Delete", "Update", "Import"
+    ]
+
+    secret_permissions = [
+      "Get", "List", "Set", "Delete", "Purge", "Recover", "Backup", "Restore"
+    ]
+
+    certificate_permissions = [
+      "Get", "List", "Create", "Delete", "Import"
+    ]
+  }
+
+  # Grant access to the VM managed identity
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = azurerm_user_assigned_identity.vm_identity.principal_id
+
+    key_permissions = [
+      "Get", "List"
+    ]
+
+    secret_permissions = [
+      "Get", "List"
+    ]
+
+    certificate_permissions = [
+      "Get", "List"
+    ]
+  }
+
   network_acls {
     bypass                     = "AzureServices"
     default_action             = "Allow"  # Allow during initial setup
@@ -64,44 +100,6 @@ resource azurerm_key_vault vault {
   tags = var.tags
 }
 
-# Access policy for admin
-resource azurerm_key_vault_access_policy admin {
-  key_vault_id = azurerm_key_vault.vault.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = var.admin_object_id
-
-  key_permissions = [
-    "Get", "List", "Create", "Delete", "Update"
-  ]
-
-  secret_permissions = [
-    "Get", "List", "Set", "Delete", "Purge", "Recover"
-  ]
-
-  certificate_permissions = [
-    "Get", "List", "Create", "Delete"
-  ]
-}
-
-# Access policy for Azure DevOps Service Principal
-resource azurerm_key_vault_access_policy devops_sp {
-  key_vault_id = azurerm_key_vault.vault.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = var.devops_object_id
-
-  key_permissions = [
-    "Get", "List", "Create", "Delete", "Update"
-  ]
-
-  secret_permissions = [
-    "Get", "List", "Set", "Delete", "Purge", "Recover", "Backup", "Restore"
-  ]
-
-  certificate_permissions = [
-    "Get", "List", "Create", "Delete"
-  ]
-}
-
 # Create VM managed identity
 resource azurerm_user_assigned_identity vm_identity {
   name                = "vm-identity"
@@ -110,35 +108,11 @@ resource azurerm_user_assigned_identity vm_identity {
   tags                = var.tags
 }
 
-# Access policy for the VM's managed identity
-resource azurerm_key_vault_access_policy vm {
-  key_vault_id = azurerm_key_vault.vault.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_user_assigned_identity.vm_identity.principal_id
-
-  key_permissions = [
-    "Get", "List"
-  ]
-
-  secret_permissions = [
-    "Get", "List"
-  ]
-
-  certificate_permissions = [
-    "Get", "List"
-  ]
-}
-
 # Admin Username Secret
 resource azurerm_key_vault_secret admin_username {
   name         = var.admin_username_secret_name
   value        = var.admin_username
   key_vault_id = azurerm_key_vault.vault.id
-
-  depends_on = [
-    azurerm_key_vault_access_policy.admin,
-    azurerm_key_vault_access_policy.devops_sp
-  ]
 }
 
 # TMDB Secrets
@@ -146,22 +120,12 @@ resource azurerm_key_vault_secret tmdb_api_key {
   name         = "tmdb-api-key"
   value        = var.tmdb_api_key
   key_vault_id = azurerm_key_vault.vault.id
-
-  depends_on = [
-    azurerm_key_vault_access_policy.admin,
-    azurerm_key_vault_access_policy.devops_sp
-  ]
 }
 
 resource azurerm_key_vault_secret tmdb_access_token {
   name         = "tmdb-access-token"
   value        = var.tmdb_access_token
   key_vault_id = azurerm_key_vault.vault.id
-
-  depends_on = [
-    azurerm_key_vault_access_policy.admin,
-    azurerm_key_vault_access_policy.devops_sp
-  ]
 }
 
 # Create ACR (Azure Container Registry)
