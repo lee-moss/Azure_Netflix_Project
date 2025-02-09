@@ -18,15 +18,15 @@ resource azurerm_key_vault vault {
 
   network_acls {
     bypass                     = "AzureServices"
-    default_action             = "Deny"
-    ip_rules                   = [var.my_ip_address]
-    virtual_network_subnet_ids = var.allowed_subnet_ids
+    default_action             = "Allow"  # Temporarily allow all access during initial setup
+    ip_rules                   = []       # Remove IP restrictions during initial setup
+    virtual_network_subnet_ids = []       # Remove subnet restrictions during initial setup
   }
 
   tags = var.tags
 }
 
-# Access policy for admin
+# Access policy for admin - Create this first
 resource azurerm_key_vault_access_policy admin {
   key_vault_id = azurerm_key_vault.vault.id
   tenant_id    = var.tenant_id
@@ -37,7 +37,7 @@ resource azurerm_key_vault_access_policy admin {
   ]
 }
 
-# Access policy for Azure DevOps Service Principal
+# Access policy for Azure DevOps Service Principal - Create this second
 resource azurerm_key_vault_access_policy devops_sp {
   key_vault_id = azurerm_key_vault.vault.id
   tenant_id    = var.tenant_id
@@ -45,6 +45,11 @@ resource azurerm_key_vault_access_policy devops_sp {
 
   secret_permissions = [
     "Get", "List", "Set", "Delete", "Purge", "Recover", "Backup", "Restore"
+  ]
+
+  # Ensure this is created after the admin policy
+  depends_on = [
+    azurerm_key_vault_access_policy.admin
   ]
 }
 
@@ -56,7 +61,7 @@ resource azurerm_user_assigned_identity vm_identity {
   tags                = var.tags
 }
 
-# Access policy for the VM's managed identity
+# Access policy for the VM's managed identity - Create this third
 resource azurerm_key_vault_access_policy vm {
   key_vault_id = azurerm_key_vault.vault.id
   tenant_id    = var.tenant_id
@@ -66,26 +71,46 @@ resource azurerm_key_vault_access_policy vm {
     "Get",
     "List"
   ]
+
+  # Ensure this is created after the DevOps policy
+  depends_on = [
+    azurerm_key_vault_access_policy.devops_sp
+  ]
 }
 
-# Admin Username Secret
+# Admin Username Secret - Create after access policies
 resource azurerm_key_vault_secret admin_username {
   name         = var.admin_username_secret_name
   value        = var.admin_username
   key_vault_id = azurerm_key_vault.vault.id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.admin,
+    azurerm_key_vault_access_policy.devops_sp
+  ]
 }
 
-# TMDB Secrets
+# TMDB Secrets - Create after access policies
 resource azurerm_key_vault_secret tmdb_api_key {
   name         = "tmdb-api-key"
   value        = var.tmdb_api_key
   key_vault_id = azurerm_key_vault.vault.id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.admin,
+    azurerm_key_vault_access_policy.devops_sp
+  ]
 }
 
 resource azurerm_key_vault_secret tmdb_access_token {
   name         = "tmdb-access-token"
   value        = var.tmdb_access_token
   key_vault_id = azurerm_key_vault.vault.id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.admin,
+    azurerm_key_vault_access_policy.devops_sp
+  ]
 }
 
 # Create ACR (Azure Container Registry)
