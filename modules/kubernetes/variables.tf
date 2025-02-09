@@ -25,7 +25,7 @@ variable node_count {
 variable node_size {
   description = "Size of the AKS nodes"
   type        = string
-  default     = "Standard_DS2_v2"
+  default     = "Standard_D2_v2"
 }
 
 # Auto-scaling Configuration
