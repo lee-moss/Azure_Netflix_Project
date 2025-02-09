@@ -38,13 +38,13 @@ resource azurerm_key_vault_access_policy admin {
 }
 
 # Access policy for Azure DevOps Service Principal
-resource azurerm_key_vault_access_policy devops {
+resource azurerm_key_vault_access_policy devops_sp {
   key_vault_id = azurerm_key_vault.vault.id
   tenant_id    = var.tenant_id
   object_id    = var.devops_object_id
 
   secret_permissions = [
-    "Get", "List", "Set", "Delete", "Purge", "Recover"
+    "Get", "List", "Set", "Delete", "Purge", "Recover", "Backup", "Restore"
   ]
 }
 
