@@ -51,6 +51,7 @@ module security {
   key_vault_name      = var.key_vault_name
   tenant_id           = data.azurerm_client_config.current.tenant_id
   admin_object_id     = data.azurerm_client_config.current.object_id
+  devops_object_id    = var.devops_object_id
   my_ip_address       = var.my_ip_address
 
   allowed_subnet_ids  = [module.networking.management_subnet_id]

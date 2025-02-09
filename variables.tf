@@ -1,13 +1,31 @@
-# Authentication Variables
+# Admin Variables
+variable admin_password {
+  description = "Admin password for the virtual machine"
+  type        = string
+  sensitive   = true
+}
+
+variable admin_password_secret {
+  description = "Name of the admin password secret in Key Vault"
+  type        = string
+  default     = "vm-password"
+}
+
 variable admin_username {
   description = "Admin username for the virtual machine"
   type        = string
 }
 
-variable admin_password {
-  description = "Admin password for the virtual machine"
+variable admin_username_secret {
+  description = "Name of the admin username secret in Key Vault"
   type        = string
-  sensitive   = true
+  default     = "vm-admin-username"
+}
+
+# DevOps Variables
+variable devops_object_id {
+  description = "Object ID of the Azure DevOps service principal"
+  type        = string
 }
 
 # Key Vault Variables
@@ -21,18 +39,6 @@ variable key_vault_rg {
   type        = string
 }
 
-variable admin_username_secret {
-  description = "Name of the admin username secret in Key Vault"
-  type        = string
-  default     = "vm-admin-username"
-}
-
-variable admin_password_secret {
-  description = "Name of the admin password secret in Key Vault"
-  type        = string
-  default     = "vm-password"
-}
-
 # Network Variables
 variable my_ip_address {
   description = "Your IP address for SSH access"
@@ -40,14 +46,14 @@ variable my_ip_address {
 }
 
 # TMDB API Variables
-variable tmdb_api_key {
-  description = "API Key for The Movie Database (TMDB)"
+variable tmdb_access_token {
+  description = "Read Access Token for The Movie Database (TMDB)"
   type        = string
   sensitive   = true
 }
 
-variable tmdb_access_token {
-  description = "Read Access Token for The Movie Database (TMDB)"
+variable tmdb_api_key {
+  description = "API Key for The Movie Database (TMDB)"
   type        = string
   sensitive   = true
 }
