@@ -12,7 +12,7 @@ variable dns_prefix {
 variable kubernetes_version {
   description = "Version of Kubernetes to use"
   type        = string
-  default     = "1.26.3"
+  default     = "1.30.7"
 }
 
 # Node Pool Configuration
