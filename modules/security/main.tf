@@ -1,3 +1,5 @@
+data azurerm_client_config current {}
+
 resource random_string random {
   length  = 8
   special = false
@@ -8,7 +10,7 @@ resource azurerm_key_vault vault {
   name                         = "${var.key_vault_name}-${random_string.random.result}"
   location                     = var.location
   resource_group_name          = var.resource_group_name
-  tenant_id                    = var.tenant_id
+  tenant_id                    = data.azurerm_client_config.current.tenant_id
   sku_name                     = "standard"
   enable_rbac_authorization    = false 
 
@@ -16,40 +18,87 @@ resource azurerm_key_vault vault {
   purge_protection_enabled     = false
   soft_delete_retention_days   = 7
 
+  # Grant initial access to the deployment service principal
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id
+
+    key_permissions = [
+      "Get", "List", "Create", "Delete", "Update", "Import"
+    ]
+
+    secret_permissions = [
+      "Get", "List", "Set", "Delete", "Purge", "Recover", "Backup", "Restore"
+    ]
+
+    certificate_permissions = [
+      "Get", "List", "Create", "Delete", "Import"
+    ]
+  }
+
+  # Grant access to the DevOps service principal in initial config
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = var.devops_object_id
+
+    key_permissions = [
+      "Get", "List", "Create", "Delete", "Update", "Import"
+    ]
+
+    secret_permissions = [
+      "Get", "List", "Set", "Delete", "Purge", "Recover", "Backup", "Restore"
+    ]
+
+    certificate_permissions = [
+      "Get", "List", "Create", "Delete", "Import"
+    ]
+  }
+
   network_acls {
     bypass                     = "AzureServices"
-    default_action             = "Allow"  # Temporarily allow all access during initial setup
-    ip_rules                   = []       # Remove IP restrictions during initial setup
-    virtual_network_subnet_ids = []       # Remove subnet restrictions during initial setup
+    default_action             = "Allow"  # Allow during initial setup
+    ip_rules                   = []
+    virtual_network_subnet_ids = []
   }
 
   tags = var.tags
 }
 
-# Access policy for admin - Create this first
+# Access policy for admin
 resource azurerm_key_vault_access_policy admin {
   key_vault_id = azurerm_key_vault.vault.id
-  tenant_id    = var.tenant_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = var.admin_object_id
+
+  key_permissions = [
+    "Get", "List", "Create", "Delete", "Update"
+  ]
 
   secret_permissions = [
     "Get", "List", "Set", "Delete", "Purge", "Recover"
   ]
+
+  certificate_permissions = [
+    "Get", "List", "Create", "Delete"
+  ]
 }
 
-# Access policy for Azure DevOps Service Principal - Create this second
+# Access policy for Azure DevOps Service Principal
 resource azurerm_key_vault_access_policy devops_sp {
   key_vault_id = azurerm_key_vault.vault.id
-  tenant_id    = var.tenant_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = var.devops_object_id
+
+  key_permissions = [
+    "Get", "List", "Create", "Delete", "Update"
+  ]
 
   secret_permissions = [
     "Get", "List", "Set", "Delete", "Purge", "Recover", "Backup", "Restore"
   ]
 
-  # Ensure this is created after the admin policy
-  depends_on = [
-    azurerm_key_vault_access_policy.admin
+  certificate_permissions = [
+    "Get", "List", "Create", "Delete"
   ]
 }
 
@@ -61,24 +110,26 @@ resource azurerm_user_assigned_identity vm_identity {
   tags                = var.tags
 }
 
-# Access policy for the VM's managed identity - Create this third
+# Access policy for the VM's managed identity
 resource azurerm_key_vault_access_policy vm {
   key_vault_id = azurerm_key_vault.vault.id
-  tenant_id    = var.tenant_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_user_assigned_identity.vm_identity.principal_id
 
-  secret_permissions = [
-    "Get",
-    "List"
+  key_permissions = [
+    "Get", "List"
   ]
 
-  # Ensure this is created after the DevOps policy
-  depends_on = [
-    azurerm_key_vault_access_policy.devops_sp
+  secret_permissions = [
+    "Get", "List"
+  ]
+
+  certificate_permissions = [
+    "Get", "List"
   ]
 }
 
-# Admin Username Secret - Create after access policies
+# Admin Username Secret
 resource azurerm_key_vault_secret admin_username {
   name         = var.admin_username_secret_name
   value        = var.admin_username
@@ -90,7 +141,7 @@ resource azurerm_key_vault_secret admin_username {
   ]
 }
 
-# TMDB Secrets - Create after access policies
+# TMDB Secrets
 resource azurerm_key_vault_secret tmdb_api_key {
   name         = "tmdb-api-key"
   value        = var.tmdb_api_key
@@ -115,21 +166,13 @@ resource azurerm_key_vault_secret tmdb_access_token {
 
 # Create ACR (Azure Container Registry)
 resource azurerm_container_registry acr {
-  name                = "netflixacr${random_string.random.result}"
+  name                = "netflixacr${lower(random_string.random.result)}"
   resource_group_name = var.resource_group_name
   location            = var.location
   sku                 = "Premium"  
   admin_enabled       = false      
 
-  public_network_access_enabled = false  
-
-  network_rule_set {
-    default_action = "Deny"
-    ip_rule {
-      action   = "Allow"
-      ip_range = var.my_ip_address
-    }
-  }
+  public_network_access_enabled = true  # Allow during initial setup
 
   tags = var.tags
 }
