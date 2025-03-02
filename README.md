@@ -1,6 +1,6 @@
-THIS IS AN ONGOING PROJECT AND WILL BE UPDATED FREQUENTLY
-
 # Azure Netflix Clone Infrastructure
+
+THIS IS AN ONGOING PROJECT AND WILL BE UPDATED FREQUENTLY
 
 This project contains the Infrastructure as Code (IaC) for deploying a Netflix clone application on Azure using Terraform and Azure DevOps for CI/CD.
 
@@ -23,6 +23,8 @@ This project contains the Infrastructure as Code (IaC) for deploying a Netflix c
 ├── terraform.tfvars     # Variable values (do not commit sensitive data)
 ├── backend.tf           # Backend configuration for state management
 ├── azure-pipelines.yml  # Azure DevOps pipeline definition
+├── cloud-init.yaml      # Cloud-init script for VM deployment
+├── vm_startup.sh        # Bash script for Prometheus/Grafana setup
 └── modules/             # Terraform modules
     ├── compute/         # VM and compute resources
     ├── keyvault/        # Key Vault configuration
@@ -145,6 +147,92 @@ Each module contains:
    - Run security checks
    - Plan the deployment
 
+## Automated Prometheus and Grafana Installation
+
+This project includes scripts to automatically install Prometheus and Grafana when deploying a new Ubuntu VM.
+
+### Installation Files
+
+- `cloud-init.yaml`: Cloud-init configuration file to automatically run the installation script during VM deployment
+- `vm_startup.sh`: Bash script that installs PowerShell and runs the Prometheus/Grafana installation script
+- `prom_and_graf.ps1`: PowerShell script that installs and configures Prometheus, Grafana, and Node Exporter
+
+### Deployment Instructions
+
+#### Azure
+
+When deploying a new Ubuntu VM in Azure, you can use the cloud-init script as follows:
+
+1. In the Azure Portal, start the VM creation process
+2. Select an Ubuntu image (18.04 LTS or newer)
+3. In the "Advanced" tab, find the "Custom data" section
+4. Paste the contents of the `cloud-init.yaml` file
+5. Complete the VM creation process
+
+#### AWS
+
+When launching a new Ubuntu instance in AWS:
+
+1. Start the EC2 instance creation process
+2. Select an Ubuntu AMI
+3. In the "Advanced Details" section, find "User data"
+4. Select "As text" and paste the contents of the `cloud-init.yaml` file
+5. Complete the instance launch process
+
+#### Google Cloud Platform
+
+When creating a new Ubuntu VM in GCP:
+
+1. Start the VM instance creation process
+2. Select an Ubuntu image
+3. Expand the "Management, security, disks, networking, sole tenancy" section
+4. In the "Management" tab, find "Automation"
+5. Paste the contents of the `cloud-init.yaml` file
+6. Complete the VM creation process
+
+### Verification
+
+After the VM is deployed, you can verify the installation by:
+
+1. SSH into your VM
+2. Check if the services are running:
+   ```bash
+   sudo systemctl status prometheus
+   sudo systemctl status node_exporter
+   sudo systemctl status grafana-server
+   ```
+3. Access the web interfaces (you may need to configure firewall rules to allow these ports):
+   - Prometheus: http://your-vm-ip:9090
+   - Node Exporter: http://your-vm-ip:9100
+   - Grafana: http://your-vm-ip:3000
+
+### Troubleshooting
+
+If you encounter any issues with the Prometheus/Grafana installation, check the installation logs:
+```bash
+cat /var/log/prometheus_grafana_setup.log
+```
+
+### Customization
+
+To customize the Prometheus/Grafana installation:
+
+1. Modify the `cloud-init.yaml` file to change the installation parameters
+2. Update the versions in the PowerShell script if you need specific versions of Prometheus or Grafana
+3. Add additional exporters or configurations as needed
+
+## Key Technologies and Tools
+
+- Azure DevOps
+- Terraform
+- Powershell/Bash
+- Docker
+- Kubernetes
+- Grafana
+- Prometheus
+- SonarQube Cloud
+- Node Exporter
+
 ## Notes
 
 - The Deploy stage is commented out by default
@@ -157,16 +245,4 @@ Each module contains:
 - Prometheus available on port 9090
 - Grafana dashboards on port 3000
 - Node Exporter metrics on port 9100
-
-### Key Technologies and Tools
-
-- Azure DevOps
-- Terraform
-- Powershell/Bash
-- Docker
-- Kubernetes
-- Grafana
-- Prometheus
-- SonarQube Cloud
-- Node Exporter
 

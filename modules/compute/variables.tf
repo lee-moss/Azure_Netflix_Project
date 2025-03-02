@@ -66,13 +66,6 @@ variable key_vault_id {
   type        = string
 }
 
-# Initialization
-variable custom_data {
-  description = "Custom data for cloud-init"
-  type        = string
-  default     = null
-}
-
 # Resource Information
 variable location {
   description = "Azure region location"

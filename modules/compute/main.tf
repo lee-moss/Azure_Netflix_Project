@@ -33,7 +33,6 @@ resource azurerm_linux_virtual_machine vm {
   location            = var.location
   size                = "Standard_DS1_v2"
   admin_username      = var.admin_username
-  custom_data         = var.custom_data
 
   network_interface_ids = [
     azurerm_network_interface.nic.id
@@ -60,6 +59,8 @@ resource azurerm_linux_virtual_machine vm {
     sku       = "22_04-lts"
     version   = "latest"
   }
+
+  custom_data = base64encode(file("prom_and_graf.sh"))
 
   tags = var.tags
 } 
