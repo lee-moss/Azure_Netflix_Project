@@ -6,26 +6,32 @@ exec > >(tee -a $LOGFILE) 2>&1
 
 echo "Starting Prometheus and Grafana installation setup at $(date)"
 
+# Function for error handling
+handle_error() {
+    echo "ERROR: $1" >&2
+    exit 1
+}
+
 # Install PowerShell if not already installed
 if ! command -v pwsh &> /dev/null; then
     echo "Installing PowerShell..."
     # Update package lists
-    apt-get update
+    apt-get update || handle_error "Failed to update package lists"
     
     # Install prerequisites
-    apt-get install -y wget apt-transport-https software-properties-common
+    apt-get install -y wget apt-transport-https software-properties-common || handle_error "Failed to install prerequisites"
     
     # Download the Microsoft repository GPG keys
-    wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb
+    wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb || handle_error "Failed to download Microsoft GPG keys"
     
     # Register the Microsoft repository GPG keys
-    dpkg -i packages-microsoft-prod.deb
+    dpkg -i packages-microsoft-prod.deb || handle_error "Failed to register Microsoft GPG keys"
     
     # Update the list of products
-    apt-get update
+    apt-get update || handle_error "Failed to update package lists after adding Microsoft repository"
     
     # Install PowerShell
-    apt-get install -y powershell
+    apt-get install -y powershell || handle_error "Failed to install PowerShell"
     
     echo "PowerShell installed successfully"
 else
@@ -34,10 +40,10 @@ fi
 
 # Create the directory for the script if it doesn't exist
 SCRIPT_DIR="/opt/prometheus_grafana"
-mkdir -p $SCRIPT_DIR
+mkdir -p $SCRIPT_DIR || handle_error "Failed to create script directory"
 
 # Create the PowerShell script
-cat > $SCRIPT_DIR/prom_and_graf.ps1 << 'EOF'
+cat > $SCRIPT_DIR/prom_and_graf.ps1 << 'EOF' || handle_error "Failed to create PowerShell script"
 #!/usr/bin/pwsh
 
 <#
@@ -210,10 +216,10 @@ try {
 EOF
 
 # Make the script executable
-chmod +x $SCRIPT_DIR/prom_and_graf.ps1
+chmod +x $SCRIPT_DIR/prom_and_graf.ps1 || handle_error "Failed to make script executable"
 
 # Run the PowerShell script with sudo
 echo "Running Prometheus and Grafana installation script..."
-sudo pwsh $SCRIPT_DIR/prom_and_graf.ps1
+sudo pwsh $SCRIPT_DIR/prom_and_graf.ps1 || handle_error "PowerShell script execution failed"
 
 echo "Setup completed at $(date)" 

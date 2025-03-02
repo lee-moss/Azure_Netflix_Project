@@ -76,7 +76,6 @@ module compute {
   key_vault_id        = module.security.key_vault_id
   vm_identity_id      = module.security.vm_identity_id
   admin_username      = var.admin_username
-#   custom_data         = base64encode(file("prom_and_graf.ps1"))
 
   tags = {
     Environment = "Development"

@@ -60,7 +60,8 @@ resource azurerm_linux_virtual_machine vm {
     version   = "latest"
   }
 
-  custom_data = base64encode(file("prom_and_graf.sh"))
+  # Use the existing cloud-init.yaml file
+  custom_data = base64encode(file("cloud-init.yaml"))
 
   tags = var.tags
 } 
