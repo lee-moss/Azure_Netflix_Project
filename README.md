@@ -147,85 +147,88 @@ Each module contains:
    - Run security checks
    - Plan the deployment
 
-## Automated Prometheus and Grafana Installation
+## Automated Monitoring Stack
 
-This project includes scripts to automatically install Prometheus and Grafana when deploying a new Ubuntu VM.
+This project includes a Docker Compose-based monitoring stack that automatically deploys Prometheus, Node Exporter, and Grafana. The stack is configured to start automatically when the VM is deployed using cloud-init.
 
-### Installation Files
+### Components
 
-- `cloud-init.yaml`: Cloud-init configuration file to automatically run the installation script during VM deployment
-- `vm_startup.sh`: Bash script that installs PowerShell and runs the Prometheus/Grafana installation script
-- `prom_and_graf.ps1`: PowerShell script that installs and configures Prometheus, Grafana, and Node Exporter
+- **Prometheus**: Metrics collection and storage (port 9090)
+- **Node Exporter**: System metrics collection (port 9100)
+- **Grafana**: Metrics visualization and dashboards (port 3000)
 
-### Deployment Instructions
+### Local Development Setup
 
-#### Azure
+1. **Prerequisites**:
+   - Docker
+   - Docker Compose
 
-When deploying a new Ubuntu VM in Azure, you can use the cloud-init script as follows:
-
-1. In the Azure Portal, start the VM creation process
-2. Select an Ubuntu image (18.04 LTS or newer)
-3. In the "Advanced" tab, find the "Custom data" section
-4. Paste the contents of the `cloud-init.yaml` file
-5. Complete the VM creation process
-
-#### AWS
-
-When launching a new Ubuntu instance in AWS:
-
-1. Start the EC2 instance creation process
-2. Select an Ubuntu AMI
-3. In the "Advanced Details" section, find "User data"
-4. Select "As text" and paste the contents of the `cloud-init.yaml` file
-5. Complete the instance launch process
-
-#### Google Cloud Platform
-
-When creating a new Ubuntu VM in GCP:
-
-1. Start the VM instance creation process
-2. Select an Ubuntu image
-3. Expand the "Management, security, disks, networking, sole tenancy" section
-4. In the "Management" tab, find "Automation"
-5. Paste the contents of the `cloud-init.yaml` file
-6. Complete the VM creation process
-
-### Verification
-
-After the VM is deployed, you can verify the installation by:
-
-1. SSH into your VM
-2. Check if the services are running:
+2. **Quick Start**:
    ```bash
-   sudo systemctl status prometheus
-   sudo systemctl status node_exporter
-   sudo systemctl status grafana-server
+   cd monitoring
+   docker-compose up -d
    ```
-3. Access the web interfaces (you may need to configure firewall rules to allow these ports):
+
+3. **Access the Services**:
+   - Grafana: http://localhost:3000 (default login: admin/admin)
+   - Prometheus: http://localhost:9090
+   - Node Exporter metrics: http://localhost:9100/metrics
+
+### Production Deployment
+
+The monitoring stack is automatically deployed to VMs using cloud-init:
+
+1. The `cloud-init.yaml` file:
+   - Installs Docker and Docker Compose
+   - Sets up the monitoring directory
+   - Deploys the monitoring stack
+   - Configures automatic startup on boot
+
+2. **Verification**:
+   ```bash
+   # Check container status
+   docker-compose ps
+   
+   # View logs
+   docker-compose logs
+   
+   # View logs for a specific service
+   docker-compose logs prometheus
+   ```
+
+3. **Access Production Services**:
+   - Grafana: http://your-vm-ip:3000
    - Prometheus: http://your-vm-ip:9090
    - Node Exporter: http://your-vm-ip:9100
-   - Grafana: http://your-vm-ip:3000
 
-### Troubleshooting
+### Security Notes
 
-If you encounter any issues with the Prometheus/Grafana installation, check the installation logs:
-```bash
-cat /var/log/prometheus_grafana_setup.log
-```
+1. **Important**: Change the default Grafana password on first login
+2. The monitoring stack uses Docker volumes for persistence:
+   - `prometheus-data`: Stores Prometheus time-series data
+   - `grafana-storage`: Stores Grafana dashboards and settings
+3. All services are configured to restart automatically
 
 ### Customization
 
-To customize the Prometheus/Grafana installation:
+1. **Prometheus**:
+   - Edit `prometheus.yml` to add more scrape targets
+   - Adjust retention settings in docker-compose.yml
 
-1. Modify the `cloud-init.yaml` file to change the installation parameters
-2. Update the versions in the PowerShell script if you need specific versions of Prometheus or Grafana
-3. Add additional exporters or configurations as needed
+2. **Grafana**:
+   - Import dashboards (Node Exporter Dashboard ID: 1860)
+   - Add Prometheus data source (URL: http://prometheus:9090)
+   - Configure additional data sources
+
+3. **Node Exporter**:
+   - Customize collectors in docker-compose.yml
+   - Add or remove mounted volumes for metrics collection
 
 ## Key Technologies and Tools
 
 - Azure DevOps
 - Terraform
-- Powershell/Bash
+- Bash
 - Docker
 - Kubernetes
 - Grafana
@@ -245,4 +248,38 @@ To customize the Prometheus/Grafana installation:
 - Prometheus available on port 9090
 - Grafana dashboards on port 3000
 - Node Exporter metrics on port 9100
+
+# Monitoring Stack
+
+This repository contains a Docker Compose setup for a monitoring stack including:
+- Prometheus (metrics collection)
+- Node Exporter (system metrics)
+- Grafana (visualization)
+
+## Quick Start
+
+1. Start the stack:
+```bash
+docker-compose up -d
+```
+
+2. Access the services:
+- Prometheus: http://localhost:9090
+- Node Exporter: http://localhost:9100/metrics
+- Grafana: http://localhost:3000 (default login: admin/admin)
+
+3. Configure Grafana:
+- Add Prometheus data source (URL: http://prometheus:9090)
+- Import Node Exporter dashboard (ID: 1860)
+
+## File Structure
+
+- `docker-compose.yml`: Service definitions
+- `prometheus.yml`: Prometheus configuration
+
+## Persistence
+
+Data is stored in Docker volumes:
+- `prometheus-data`: Prometheus time series data
+- `grafana-storage`: Grafana dashboards and settings
 

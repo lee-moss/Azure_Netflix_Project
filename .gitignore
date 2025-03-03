@@ -12,6 +12,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Monitoring data
+monitoring/prometheus-data/
+monitoring/grafana-storage/
+monitoring/data/
+**/prometheus-data/
+**/grafana-storage/
+
 # Build output
 dist/
 build/
