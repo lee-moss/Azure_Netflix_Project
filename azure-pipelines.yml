@@ -8,15 +8,15 @@ trigger:
       - '*'     
       - '**/*'  
 
-# pr:
-#   autoCancel: true   
-#   branches:
-#     include:
-#       - main
-#   paths:
-#     include:
-#       - '*'
-#       - '**/*'
+pr:
+  autoCancel: true   
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - '*'
+      - '**/*'
 
 resources:
   repositories:
@@ -103,11 +103,17 @@ stages:
     jobs:
       - job: ValidateAndPlan
         steps:
+          - task: Cache@2
+            inputs:
+              key: 'terraform | "$(Agent.OS)"'
+              path: '$(Pipeline.Workspace)/.terraform'
+              
           - task: TerraformInstaller@1
             inputs:
               terraformVersion: 'latest'
 
           - task: TerraformTaskV4@4
+            name: TerraformInit
             inputs:
               provider: 'azurerm'
               command: 'init'
@@ -119,11 +125,15 @@ stages:
               commandOptions: '-upgrade'
 
           - task: TerraformTaskV4@4
+            name: TerraformPlan
             inputs:
               provider: 'azurerm'
               command: 'plan'
               environmentServiceNameAzureRM: 'devOps-connection'
-              commandOptions: '-var="admin_username=$(admin_username)" -var="admin_password=$(admin_password)" -var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject" -var="my_ip_address=$(my_ip_address)" -var="tmdb_api_key=$(tmdb_api_key)" -var="tmdb_access_token=$(tmdb_access_token)" -var="devops_object_id=$(devops_object_id)"'
+              commandOptions: '-var="admin_username=$(admin_username)" -var="admin_password=$(admin_password)" -var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject" -var="my_ip_address=$(my_ip_address)" -var="tmdb_api_key=$(tmdb_api_key)" -var="tmdb_access_token=$(tmdb_access_token)" -var="devops_object_id=$(devops_object_id)" -out=$(Pipeline.Workspace)/terraform.plan'
+              
+          - publish: $(Pipeline.Workspace)/terraform.plan
+            artifact: TerraformPlan
 
   - stage: Deploy
     displayName: 'Deploy Infrastructure'
@@ -132,6 +142,9 @@ stages:
     jobs:
       - job: Apply
         steps:
+          - download: current
+            artifact: TerraformPlan
+            
           - task: TerraformInstaller@1
             inputs:
               terraformVersion: 'latest'
@@ -139,18 +152,7 @@ stages:
           - task: TerraformTaskV4@4
             inputs:
               provider: 'azurerm'
-              command: 'init'
-              backendServiceArm: 'devOps-connection'
-              backendAzureRmResourceGroupName: '$(TF_STATE_RG)'
-              backendAzureRmStorageAccountName: '$(TF_STATE_STORAGE)'
-              backendAzureRmContainerName: '$(TF_STATE_CONTAINER)'
-              backendAzureRmKey: 'netflix.tfstate'
-              commandOptions: '-upgrade'
-
-          - task: TerraformTaskV4@4
-            inputs:
-              provider: 'azurerm'
               command: 'apply'
               environmentServiceNameAzureRM: 'devOps-connection'
-              commandOptions: '-var="admin_username=$(admin_username)" -var="admin_password=$(admin_password)" -var="key_vault_name=NetflixSecret" -var="key_vault_rg=NetflixProject" -var="my_ip_address=$(my_ip_address)" -var="tmdb_api_key=$(tmdb_api_key)" -var="tmdb_access_token=$(tmdb_access_token)" -var="devops_object_id=$(devops_object_id)"'
+              commandOptions: '$(Pipeline.Workspace)/TerraformPlan/terraform.plan'
 
