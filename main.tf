@@ -29,16 +29,15 @@ module networking {
   my_ip_address            = var.my_ip_address
 
   vnet_name                = "netflix-network"
+  bastion_name             = "AzureBastion"
   address_space            = ["10.0.0.0/16"]
   aks_subnet_prefix        = "10.0.1.0/24"
   management_subnet_prefix = "10.0.2.0/24"
   db_subnet_prefix         = "10.0.3.0/24"
   pe_subnet_prefix         = "10.0.4.0/24"
-
   tags = {
     Environment = "Development"
     Project     = "Netflix Project"
-    Terraform   = "true"
   }
 }
 
