@@ -18,8 +18,3 @@ output ssh_public_key {
   description = "Public key for SSH access"
   value       = tls_private_key.ssh_key.public_key_openssh
 }
-
-output vm_public_ip_fqdn {
-  description = "The FQDN of the virtual machine's public IP address"
-  value       = azurerm_public_ip.vm_public_ip.fqdn
-} 

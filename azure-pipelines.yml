@@ -3,10 +3,10 @@ trigger:
   branches:
     include:
       - main
-  paths:
-    include:
-      - '*'     
-      - '**/*'  
+  # paths:
+  #   include:
+  #     - '*'     
+  #     - '**/*'  
 
 pr:
   autoCancel: true   
