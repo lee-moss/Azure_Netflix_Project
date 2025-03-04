@@ -36,6 +36,16 @@ variable pe_subnet_prefix {
   default     = "10.0.4.0/24"
 }
 
+variable bastion_name {
+  type = string
+}
+
+variable bastion_subnet_prefix {
+  description = "Address prefix for the AzureBastion subnet"
+  type        = string
+  default     = "10.0.5.0/27"
+}
+
 # NAT Gateway Configuration
 variable nat_gateway_name {
   description = "Name of the NAT gateway"
