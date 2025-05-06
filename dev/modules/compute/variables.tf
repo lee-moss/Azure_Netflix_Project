@@ -4,6 +4,11 @@ variable admin_username {
   type        = string
 }
 
+variable environment {  
+  description = "Environment, eg dev, nonprod, prod"
+  type        = string
+}
+
 # VM Configuration
 variable vm_name {
   description = "Name of the virtual machine"

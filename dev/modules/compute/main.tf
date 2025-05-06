@@ -2,7 +2,7 @@
 resource azurerm_network_interface nic {
   name                = "vm-nic"
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = "rg-${var.resource_group_name}-${var.environment}"
 
   ip_configuration {
     name                          = "internal"
