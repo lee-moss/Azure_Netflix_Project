@@ -1,7 +1,5 @@
 # Azure Netflix Clone Infrastructure
 
-THIS IS AN ONGOING PROJECT AND WILL BE UPDATED FREQUENTLY
-
 This project contains the Infrastructure as Code (IaC) for deploying a Netflix clone application on Azure using Terraform and Azure DevOps for CI/CD.
 
 ![Infrastructure Diagram](diagram.png)
@@ -25,6 +23,7 @@ This project contains the Infrastructure as Code (IaC) for deploying a Netflix c
 ├── azure-pipelines.yml  # Azure DevOps pipeline definition
 ├── cloud-init.yaml      # Cloud-init script for VM deployment
 ├── vm_startup.sh        # Bash script for Prometheus/Grafana setup
+├── docker-compose.yml   # Local development services
 └── modules/             # Terraform modules
     ├── compute/         # VM and compute resources
     ├── keyvault/        # Key Vault configuration
@@ -33,6 +32,24 @@ This project contains the Infrastructure as Code (IaC) for deploying a Netflix c
     ├── networking/      # VNet, subnets, NSG, NAT
     └── security/        # Security configurations
 ```
+
+## Application Components
+
+1. **Frontend** (Port 3000)
+   - Basic Netflix-like UI
+   - TMDB API integration
+   - Docker containerized
+
+2. **Backend** (Port 8080)
+   - Express server
+   - TMDB API integration
+   - Health check endpoints
+   - Docker containerized
+
+3. **Monitoring Stack**
+   - Prometheus (Port 9090)
+   - Node Exporter (Port 9100)
+   - Grafana (Port 3001)
 
 ## Module Structure
 
@@ -147,82 +164,26 @@ Each module contains:
    - Run security checks
    - Plan the deployment
 
-## Automated Monitoring Stack
+## Local Development
 
 This project includes a Docker Compose-based monitoring stack that automatically deploys Prometheus, Node Exporter, and Grafana. The stack is configured to start automatically when the VM is deployed using cloud-init.
 
-### Components
-
-- **Prometheus**: Metrics collection and storage (port 9090)
-- **Node Exporter**: System metrics collection (port 9100)
-- **Grafana**: Metrics visualization and dashboards (port 3000)
-
-### Local Development Setup
-
-1. **Prerequisites**:
-   - Docker
-   - Docker Compose
-
-2. **Quick Start**:
+1. **Environment Setup**
    ```bash
-   cd monitoring
-   docker-compose up -d
+   cp .env.example .env
+   # Add your TMDB API credentials
    ```
 
-3. **Access the Services**:
-   - Grafana: http://localhost:3000 (default login: admin/admin)
+2. **Start Services**
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Access Points**
+   - Frontend: http://localhost:3000
+   - Backend: http://localhost:8080
+   - Grafana: http://localhost:3001
    - Prometheus: http://localhost:9090
-   - Node Exporter metrics: http://localhost:9100/metrics
-
-### Production Deployment
-
-The monitoring stack is automatically deployed to VMs using cloud-init:
-
-1. The `cloud-init.yaml` file:
-   - Installs Docker and Docker Compose
-   - Sets up the monitoring directory
-   - Deploys the monitoring stack
-   - Configures automatic startup on boot
-
-2. **Verification**:
-   ```bash
-   # Check container status
-   docker-compose ps
-   
-   # View logs
-   docker-compose logs
-   
-   # View logs for a specific service
-   docker-compose logs prometheus
-   ```
-
-3. **Access Production Services**:
-   - Grafana: http://your-vm-ip:3000
-   - Prometheus: http://your-vm-ip:9090
-   - Node Exporter: http://your-vm-ip:9100
-
-### Security Notes
-
-1. **Important**: Change the default Grafana password on first login
-2. The monitoring stack uses Docker volumes for persistence:
-   - `prometheus-data`: Stores Prometheus time-series data
-   - `grafana-storage`: Stores Grafana dashboards and settings
-3. All services are configured to restart automatically
-
-### Customization
-
-1. **Prometheus**:
-   - Edit `prometheus.yml` to add more scrape targets
-   - Adjust retention settings in docker-compose.yml
-
-2. **Grafana**:
-   - Import dashboards (Node Exporter Dashboard ID: 1860)
-   - Add Prometheus data source (URL: http://prometheus:9090)
-   - Configure additional data sources
-
-3. **Node Exporter**:
-   - Customize collectors in docker-compose.yml
-   - Add or remove mounted volumes for metrics collection
 
 ## Key Technologies and Tools
 
@@ -246,7 +207,7 @@ The monitoring stack is automatically deployed to VMs using cloud-init:
 ## Monitoring
 
 - Prometheus available on port 9090
-- Grafana dashboards on port 3000
+- Grafana dashboards on port 3001
 - Node Exporter metrics on port 9100
 
 # Monitoring Stack
