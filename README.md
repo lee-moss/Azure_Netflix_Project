@@ -1,11 +1,20 @@
 # Azure Netflix Clone Infrastructure
 
-This project contains the Infrastructure as Code (IaC) for deploying a Netflix clone application on Azure using Terraform and Azure DevOps for CI/CD.
+This project contains the Infrastructure as Code (IaC) for deploying a Netflix clone application on Azure using Terraform and Azure DevOps for CI/CD. 
+
+It also supports local development using Kind (Kubernetes in Docker).
 
 ![Infrastructure Diagram](diagram.png)
 
 ## Prerequisites
 
+### For Local Development
+- Docker Desktop
+- Kind
+- kubectl
+- TMDB API credentials
+
+### For Cloud Deployment
 - Azure Subscription
 - Azure DevOps Organization
 - GitHub Account
@@ -163,6 +172,59 @@ Each module contains:
    - Validate changes
    - Run security checks
    - Plan the deployment
+
+## Local Development with Kind
+
+### Setup Local Environment
+1. Create a `.env` file in the `netflix-app` directory:
+```bash
+TMDB_API_KEY=your_tmdb_api_key_here
+TMDB_ACCESS_TOKEN=your_tmdb_access_token_here
+```
+
+2. Start the local cluster:
+```bash
+cd netflix-app
+./setup-kind.sh
+```
+
+3. Access the application:
+- Frontend: http://localhost:3000
+- Backend: http://localhost:8080
+
+### Cleanup Local Environment
+```bash
+kind delete cluster --name netflix-cluster
+```
+
+## Environment Differences
+
+| Feature | Local (Kind) | Cloud (AKS) |
+|---------|-------------|-------------|
+| Cost | Free | Pay-per-use |
+| Scalability | Limited | Full AKS capabilities |
+| Persistence | Ephemeral | Azure Disks |
+| Monitoring | Basic | Full Azure monitoring |
+| Networking | Local ports | Azure Load Balancer |
+| SSL/TLS | No | Yes (with cert-manager) |
+
+## Switching Between Environments
+
+### From Local to Cloud
+1. Stop the local cluster:
+```bash
+kind delete cluster --name netflix-cluster
+```
+
+2. Follow the "Cloud Deployment" steps in the Azure section.
+
+### From Cloud to Local
+1. Clean up Azure resources (optional):
+```bash
+terraform destroy
+```
+
+2. Follow the "Local Development" steps above.
 
 ## Local Development
 

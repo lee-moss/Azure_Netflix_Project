@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netflix-backend
+  namespace: netflix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netflix-backend
+  template:
+    metadata:
+      labels:
+        app: netflix-backend
+    spec:
+      containers:
+      - name: backend
+        image: netflix-backend:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: TMDB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tmdb-secrets
+              key: TMDB_API_KEY
+        - name: TMDB_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: tmdb-secrets
+              key: TMDB_ACCESS_TOKEN
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "0.2"
+            memory: "256Mi" 

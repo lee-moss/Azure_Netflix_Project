@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netflix-frontend
+  namespace: netflix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netflix-frontend
+  template:
+    metadata:
+      labels:
+        app: netflix-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: netflix-frontend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: REACT_APP_API_URL
+          value: "http://localhost:8081"
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "0.2"
+            memory: "256Mi" 
