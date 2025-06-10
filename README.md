@@ -1,5 +1,7 @@
 # Azure Netflix Clone Infrastructure
 
+THIS IS STILL IN THE TESTING STAGE
+
 This project contains the Infrastructure as Code (IaC) for deploying a Netflix clone application on Azure using Terraform and Azure DevOps for CI/CD. 
 
 It also supports local development using Kind (Kubernetes in Docker).
