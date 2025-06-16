@@ -34,7 +34,6 @@ It also supports local development using Kind (Kubernetes in Docker).
 ├── azure-pipelines.yml  # Azure DevOps pipeline definition
 ├── cloud-init.yaml      # Cloud-init script for VM deployment
 ├── vm_startup.sh        # Bash script for Prometheus/Grafana setup
-├── docker-compose.yml   # Local development services
 └── modules/             # Terraform modules
     ├── compute/         # VM and compute resources
     ├── keyvault/        # Key Vault configuration
