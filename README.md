@@ -60,7 +60,7 @@ It also supports local development using Kind (Kubernetes in Docker).
 3. **Monitoring Stack**
    - Prometheus (Port 9090)
    - Node Exporter (Port 9100)
-   - Grafana (Port 3001)
+   - Grafana (Port 3000)
 
 ## Module Structure
 
@@ -246,7 +246,7 @@ This project includes a Docker Compose-based monitoring stack that automatically
 3. **Access Points**
    - Frontend: http://localhost:3000
    - Backend: http://localhost:8080
-   - Grafana: http://localhost:3001
+   - Grafana: http://localhost:3000
    - Prometheus: http://localhost:9090
 
 ## Key Technologies and Tools
@@ -271,7 +271,7 @@ This project includes a Docker Compose-based monitoring stack that automatically
 ## Monitoring
 
 - Prometheus available on port 9090
-- Grafana dashboards on port 3001
+- Grafana dashboards on port 3000
 - Node Exporter metrics on port 9100
 
 # Monitoring Stack
